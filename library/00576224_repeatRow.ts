@@ -1,9 +1,9 @@
 /**
- * Extends a row horizontally by concatenating it to itself a specific number of times.
+ * Repeats a row a specified number of times via horizontal concatenation.
  * 
- * @param {number[]} row - The source row to be repeated.
- * @param {number} times - The number of times the row should appear sequentially in the result.
- * @returns {number[]} A new array consisting of the repeated sequence of the input row.
+ * @param {number[]} row - The source array to be repeated.
+ * @param {number} times - The number of times to duplicate the row.
+ * @returns {number[]} A new array containing the source row repeated 'times' times.
  */
 export function repeatRow(row: number[], times: number): number[] {
   let result: number[] = [];

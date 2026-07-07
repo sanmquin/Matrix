@@ -25,10 +25,35 @@ function repeatRow(row, times) {
  * Determines the target grid size factor by comparing input and output dimensions.
  * @param {Array<Array<number>>} input - The input grid.
  * @param {Array<Array<number>>} output - The output grid.
- * @returns {number} The scaling factor (e.g., 3).
+ * @returns {number} The scaling factor.
  */
 function getScaleFactor(input, output) {
   return output.length / input.length;
+}
+
+/**
+ * Determines if the row needs a flip based on the transformation pattern in training data.
+ * @param {Array<Array<number>>} input - The input grid.
+ * @param {Array<Array<number>>} output - The output grid.
+ * @param {number} blockIndex - The vertical block index.
+ * @param {number} rowIndex - The row index within the block.
+ * @returns {boolean} Whether the row should be flipped.
+ */
+function shouldFlip(input, output, blockIndex, rowIndex) {
+  const row = input[rowIndex];
+  const targetRow = output[blockIndex * input.length + rowIndex];
+  const isFlipped = targetRow[0] !== row[0];
+  return isFlipped;
+}
+
+/**
+ * Transforms a row given a boolean flip instruction.
+ * @param {Array<number>} row - The source row.
+ * @param {boolean} flip - Whether to flip the row.
+ * @returns {Array<number>} The processed row.
+ */
+function applyTransform(row, flip) {
+  return flip ? flipRow(row) : row;
 }
 
 /**
@@ -40,15 +65,16 @@ function getScaleFactor(input, output) {
 function solve(grid, training) {
   const example = training[0];
   const factor = getScaleFactor(example.input, example.output);
-  const rows = grid.length;
-  const output = [];
+  const outputGrid = [];
 
-  for (let blockRow = 0; blockRow < factor; blockRow++) {
-    for (let i = 0; i < rows; i++) {
-      const sourceRow = (blockRow % 2 === 0) ? grid[i] : flipRow(grid[i]);
-      output.push(repeatRow(sourceRow, factor));
+  for (let b = 0; b < factor; b++) {
+    for (let r = 0; r < grid.length; r++) {
+      const flip = shouldFlip(example.input, example.output, b, r);
+      const transformedRow = applyTransform(grid[r], flip);
+      const finalRow = repeatRow(transformedRow, factor);
+      outputGrid.push(finalRow);
     }
   }
 
-  return output;
+  return outputGrid;
 }
