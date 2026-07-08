@@ -19,3 +19,8 @@ Modular functions for ARC puzzles.
 - **getBounds**: Calculates the axis-aligned bounding box (AABB) for a collection of points representing a component.
 - **calculateFillColor**: Determines the appropriate color value to fill a rectangle based on the inverse of its dimensions.
 - **fillRectangle**: Fills the interior cells (where value is 0) of a defined rectangular boundary with a specific color.
+
+### Task 03560426
+- **findBlocks**: Scans a 2D grid to identify distinct connected components of non-zero pixels. It utilizes a BFS flood-fill algorithm to group connected pixels of the same color and calculates the bounding box and color properties for each identified block. Returns a list of blocks sorted by their original column and row positions.
+- **createEmptyGrid**: Initializes a new 2D array of a specified size filled with zeros.
+- **placeBlocksDiagonally**: Iterates through a list of block objects and places them onto the grid starting at a diagonal offset. The offset is calculated by tracking the cumulative height and width of previous blocks.
