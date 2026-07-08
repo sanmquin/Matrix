@@ -37,3 +37,8 @@ Modular functions for ARC puzzles.
 - **extractTile**: Slices a sub-matrix (tile) from the original grid starting at a specific coordinate with defined height and width dimensions.
 - **computeMajorityTile**: Aggregates multiple tiles into one 'canonical' tile. For every pixel position (r, c), it performs a majority vote across all tiles to determine the most likely correct pixel value.
 - **reconstructGrid**: Generates a new grid by tiling the canonical pattern into the locations defined by the row and column bands, filling remaining areas with zero.
+
+### Task 0692e18c
+- **findPrimaryColor**: Scans a 2D grid from top-left to bottom-right and returns the value of the first cell that is not equal to zero. If the grid contains only zeros, returns zero.
+- **invertGrid**: Generates a new square matrix of the same dimensions where original non-zero cells become 0, and original zero cells are replaced by a provided color constant.
+- **applyTiling**: Constructs a larger output grid by tiling a provided sub-matrix. For every non-zero cell in the input grid, the entire 'tile' matrix is copied into the corresponding expanded area in the output.
