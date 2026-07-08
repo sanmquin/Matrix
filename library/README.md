@@ -52,3 +52,8 @@ Modular functions for ARC puzzles.
 - **findFirstOccurrence**: Scans a 2D grid to locate the first cell containing the specified value, returning its [row, col] coordinates. Returns [0, 0] if the value is not found.
 - **extractSpiralParams**: Parses specific cells from the input grid to determine the two colors used for the spiral pattern and the static center identification value.
 - **generateSpiralPath**: Calculates a sequence of coordinates and colors representing a spiral expanding outward from a central point. The spiral alternates between two colors and stops when it reaches the grid boundaries.
+
+### Task 0934a4d8
+- **findBoundingBox**: Scans a 2D grid to determine the rectangular boundaries (minimum and maximum row and column indices) that encompass all instances of a specific target value. Returns null if the value is not present.
+- **getRowPrediction**: Predicts a missing value in a row by finding another row in the grid that shares the same contextual values in non-occluded columns. It ignores the area defined by the bounding box during the search process.
+- **getColPrediction**: Predicts a missing value in a column by finding another column in the grid that shares the same contextual values in non-occluded rows. It ignores the area defined by the bounding box during the search process.
