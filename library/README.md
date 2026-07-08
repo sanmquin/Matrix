@@ -12,3 +12,10 @@ Modular functions for ARC puzzles.
 - **getPattern**: Analyzes a grid to identify the relative geometry of all pixels with a value of 1. It calculates the top-left offset, translates all coordinates to start from (0,0), and returns a serialized string representation for pattern comparison.
 - **buildPatternMap**: Iterates through training pairs to correlate shape patterns found in input grids with the specific 'result' color used in the output grid. It creates a lookup table for pattern-to-color mapping.
 - **transformGrid**: Applies a transformation to the grid based on a determined color. It replaces value '8' with the identified color, clears '1's, and preserves other grid values.
+
+### Task 00dbd492
+- **detectMarkerValue**: Scans the training data to determine the constant value used to define the boundaries/structures in the grid. In this specific task, it returns the constant integer 2.
+- **findComponents**: Performs a Breadth-First Search (BFS) to identify all distinct contiguous clusters of cells containing the specified marker value.
+- **getBounds**: Calculates the axis-aligned bounding box (AABB) for a collection of points representing a component.
+- **calculateFillColor**: Determines the appropriate color value to fill a rectangle based on the inverse of its dimensions.
+- **fillRectangle**: Fills the interior cells (where value is 0) of a defined rectangular boundary with a specific color.
