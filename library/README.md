@@ -42,3 +42,8 @@ Modular functions for ARC puzzles.
 - **findPrimaryColor**: Scans a 2D grid from top-left to bottom-right and returns the value of the first cell that is not equal to zero. If the grid contains only zeros, returns zero.
 - **invertGrid**: Generates a new square matrix of the same dimensions where original non-zero cells become 0, and original zero cells are replaced by a provided color constant.
 - **applyTiling**: Constructs a larger output grid by tiling a provided sub-matrix. For every non-zero cell in the input grid, the entire 'tile' matrix is copied into the corresponding expanded area in the output.
+
+### Task 070dd51e
+- **findDots**: Scans the input grid and categorizes the coordinates of all non-zero cells by their color value. Returns a mapping where keys are color integers and values are arrays of [row, column] coordinate pairs.
+- **extractLines**: Processes coordinate pairs to determine geometric orientation. It classifies dots into horizontal lines (same row) or vertical lines (same column) and calculates the inclusive start and end boundaries for each line.
+- **renderLines**: Constructs a new grid based on existing data and defined line segments. It iterates through the line definitions and fills the grid cells between the start and end points with the specified color.
