@@ -26,3 +26,6 @@ The solution processes a grid to create a fractal-like expansion. First, it iden
 
 ### Task 070dd51e
 The solution implements a path-drawing logic for ARC grid puzzles. It identifies pairs of non-zero colored pixels ('dots') in the grid, determines if they form horizontal or vertical lines by comparing their coordinates, and then re-renders the grid by filling the entire segment between the paired coordinates with the respective color of the dots. The process treats each color as a unique line segment definition, populates a new grid, and applies the color values across the calculated path.
+
+### Task 08573cc6
+The solution algorithm generates a two-colored spiral pattern within a grid, anchored at a specific starting position. It first extracts color parameters and the center coordinate from the input grid. It then initializes an empty grid and calculates a spiral path starting from the center point, alternating colors (c1 and c2) based on the current spiral segment. As the spiral expands outward with increasing segment lengths, the coordinates are validated against grid boundaries. Finally, the calculated path points are mapped onto the output grid to construct the resulting pattern.
