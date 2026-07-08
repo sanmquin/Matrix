@@ -47,3 +47,8 @@ Modular functions for ARC puzzles.
 - **findDots**: Scans the input grid and categorizes the coordinates of all non-zero cells by their color value. Returns a mapping where keys are color integers and values are arrays of [row, column] coordinate pairs.
 - **extractLines**: Processes coordinate pairs to determine geometric orientation. It classifies dots into horizontal lines (same row) or vertical lines (same column) and calculates the inclusive start and end boundaries for each line.
 - **renderLines**: Constructs a new grid based on existing data and defined line segments. It iterates through the line definitions and fills the grid cells between the start and end points with the specified color.
+
+### Task 08573cc6
+- **findFirstOccurrence**: Scans a 2D grid to locate the first cell containing the specified value, returning its [row, col] coordinates. Returns [0, 0] if the value is not found.
+- **extractSpiralParams**: Parses specific cells from the input grid to determine the two colors used for the spiral pattern and the static center identification value.
+- **generateSpiralPath**: Calculates a sequence of coordinates and colors representing a spiral expanding outward from a central point. The spiral alternates between two colors and stops when it reaches the grid boundaries.
