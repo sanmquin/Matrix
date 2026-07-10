@@ -2,73 +2,63 @@
 
 This file contains logical groupings of modular functions used to solve ARC puzzles.
 
-## Grid Geometry and Transformation
+## Geometric Transformation and Structural Manipulation
 
-This cluster focuses on the structural manipulation of grids, including resizing, reshaping, and basic linear transformations. Functions here handle the arithmetic of grid dimensions, the movement or duplication of data across cells, and the physical restructuring of data arrays. These are fundamental for tasks involving scaling, flipping, mirroring, or shifting components to create new patterns or expanded layouts based on the original grid's properties.
+This cluster focuses on low-level grid manipulations, such as flipping, scaling, repeating, and deep-copying arrays. These functions are typically used to alter the spatial arrangement of the grid or prepare it for more complex operations by ensuring data immutability. They serve as foundational utilities for puzzles that require resizing, mirroring, or duplicating structural elements of a grid.
 
 ### Examples:
-- **flipRow**: Reverses a 1D array to perform a horizontal flip.
-- **repeatRow**: Expands row length by concatenating the row to itself.
-- **getScaleFactor**: Calculates the ratio between output and input grid heights for magnification.
-- **createEmptyGrid**: Initializes a new 2D array of zeros for workspace preparation.
-- **cloneGrid**: Creates a deep copy of a 2D array for safe, immutable transformations.
-- **copyGrid**: Creates a deep clone of a 2D grid to prevent mutation of source data.
+- **flipRow**: Reverses a 1D array to effect a horizontal flip.
+- **repeatRow**: Concatenates a row to itself to perform spatial expansion.
+- **getScaleFactor**: Calculates the magnification ratio between input and output grid dimensions.
+- **cloneGrid**: Performs a deep copy to preserve the integrity of the original input.
+- **copyGrid**: Creates a clone of a 2D array for safe transformations.
 
 ---
 
-## Pattern Recognition and Spatial Analysis
+## Pattern Recognition and Feature Extraction
 
-These functions are designed to extract abstract information from the grid's topology. They identify shapes, connected components, specific marker values, and relative geometric offsets. By analyzing how pixels relate to one another—such as identifying bounding boxes, tracing connected paths, or segmenting regions—these functions enable the system to 'understand' the existing structure before applying logic-based modifications or color-based filling.
+These functions are designed to identify objects, shapes, or persistent markers within a grid. They utilize algorithms like Breadth-First Search (BFS) to segment contiguous pixels into 'components' or 'blocks'. By calculating bounding boxes or relative geometries, these functions abstract the raw pixel data into higher-level objects, allowing the solver to reason about the composition of a scene rather than just individual cells.
 
 ### Examples:
-- **getPattern**: Analyzes relative geometry of pixels to create a serialized representation.
+- **getPattern**: Serializes the relative geometry of pixels with a value of 1 for comparison.
 - **findComponents**: Uses BFS to identify distinct contiguous clusters of a specific marker value.
-- **getBounds**: Calculates the axis-aligned bounding box (AABB) for a set of points.
-- **findBlocks**: Identifies and sorts connected components of non-zero pixels based on position.
-- **findBoundingBox**: Determines the rectangular boundaries of all instances of a target value.
-- **getConnectedComponent**: Isolates a single connected component of non-zero values using BFS.
-- **isSurrounded**: Checks if a cell is enclosed by non-zero values in all directions.
+- **findBlocks**: Identifies connected components and calculates their bounding boxes and color properties.
+- **findDots**: Categorizes coordinates of all non-zero cells by their color.
+- **getConnectedComponent**: Uses BFS to isolate a single connected component of non-zero values.
 
 ---
 
-## Tiling, Rendering, and Reconstruction
+## Tiling, Reconstruction, and Statistical Inference
 
-This cluster is dedicated to generative tasks where the input provides a base pattern or 'tile' that is replicated or reconstructed across a larger field. These functions handle the logic of taking sub-segments of a grid and tiling them according to discovered rules, such as frequency analysis, band segmentation, or majority voting. They are essential for tasks requiring the rebuilding of grids based on recurring motifs or signal density.
+This cluster involves puzzles that require identifying a recurring unit or 'tile' and reconstructing a grid based on statistical patterns (like the mode or density thresholds). These functions analyze frequency and distribution to separate 'signal' from 'noise', then apply logic to tile, fill, or reconstruct a larger output structure based on identified sub-patterns.
 
 ### Examples:
-- **findThreshold**: Determines a cut-off point to separate signal density from noise.
-- **getBands**: Segments density counts into continuous intervals.
-- **extractTile**: Slices a specific sub-matrix or tile from a grid.
-- **computeMajorityTile**: Aggregates multiple tiles into one canonical pattern using majority voting.
-- **reconstructGrid**: Generates a full grid by placing canonical patterns into identified bands.
-- **applyTiling**: Constructs a large grid by replicating a sub-matrix based on input grid non-zero cells.
+- **findThreshold**: Determines a threshold value to separate signal regions from noise based on density gaps.
+- **computeMajorityTile**: Aggregates multiple extracted tiles into a canonical version using a majority vote.
+- **reconstructGrid**: Generates a full grid by tiling a pattern into specified bands.
+- **applyTiling**: Constructs an output by stamping a tile into positions indicated by non-zero inputs.
 
 ---
 
-## Rule-Based Transformation and Filling
+## Logic-Based Spatial Processing and Filling
 
-This group encompasses functions that apply specific business logic to alter the content of the grid, such as color-replacement, filling rectangular regions, or moving 'agents' (like pushers or beams). These functions act upon identified structures to change their state, color, or position based on defined rules derived from the training data or local grid context.
+This cluster addresses problems where grid areas must be filled or transformed based on specific environmental conditions or rule sets. This includes calculating bounding boxes to fill interior regions, projecting 'beams' or 'pushers' across a grid, or generating complex paths like spirals. These functions encapsulate the behavioral logic required to resolve state changes across the grid.
 
 ### Examples:
-- **buildPatternMap**: Creates a lookup table correlating input patterns to specific output colors.
-- **transformGrid**: Applies a transformation by replacing specific values with mapped colors.
-- **fillRectangle**: Fills empty cells within a defined rectangular boundary.
-- **placeBlocksDiagonally**: Positions block objects onto a grid with cumulative diagonal offsets.
-- **processVector**: Applies transformation logic to a row/column, including marker conversion and movement.
-- **renderLines**: Fills defined line segments into a grid.
+- **fillRectangle**: Fills interior cells (0s) within a defined boundary with a target color.
+- **processVector**: Applies transformation logic to sequences, including moving pushers and filling blocked zones.
+- **generateSpiralPath**: Calculates coordinate sequences for outward spiral patterns.
+- **renderLines**: Fills grid cells between calculated start and end points of identified lines.
 
 ---
 
-## Data Extraction and Context Prediction
+## Contextual Prediction and Lookup
 
-These functions serve the intelligence layer of the system by scanning grids to find specific values, infer background colors, or predict missing information based on surrounding context. They perform statistical analysis or pattern matching (like finding the most frequent color or the first occurrence of a value) to provide the parameters needed by the transformation functions.
+These functions solve puzzles by inferring missing or related values based on the surrounding context or existing training data. By building lookup tables (pattern-to-color) or searching for rows/columns that share similar characteristics, these functions predict how to fill gaps or assign colors to specific regions.
 
 ### Examples:
-- **detectMarkerValue**: Determines the constant value used to define structural boundaries.
-- **findPrimaryColor**: Finds the first non-zero cell value in a grid.
-- **findDots**: Categorizes non-zero cell coordinates by their color value.
-- **getBackgroundColor**: Infers the primary background color by frequency analysis.
-- **getRowPrediction**: Predicts a missing row value based on contextual similarities.
-- **extractSpiralParams**: Parses specific cells to identify colors and center points for spiral generation.
+- **buildPatternMap**: Correlates shape patterns from training pairs with output colors for future lookup.
+- **getRowPrediction**: Predicts a missing value by finding a matching row in the grid context.
+- **detectMarkerValue**: Scans training data to determine constants used for structural boundaries.
 
 ---
