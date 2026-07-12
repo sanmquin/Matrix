@@ -93,3 +93,9 @@ Modular functions for ARC puzzles.
 - **classifyShapes**: Performs geometric analysis on connected components to categorize them as single pixels, lines (horizontal/vertical), or L-shapes with defined bounce trajectories.
 - **simulateBilliard**: Calculates the path of a diagonal ray, handling reflections off lines and color changes upon collision with structural components.
 - **simulateLineExtension**: Projects a path from a line towards a target partner line, filling the intermediate cells.
+
+### Task 16b78196
+- **getMostCommon**: Calculates the mode of an array of numbers. Returns the most frequent element, or null if the array is empty.
+- **groupContiguous**: Groups an array of integers into an array of sub-arrays, where each sub-array contains a sequence of consecutive integers.
+- **noBlockOverlap**: Checks if a set of relative cells, when translated to a specific origin (rmin, cmin), overlaps with any existing cells belonging to the main structure (blockCells).
+- **noConflict**: Verifies that a shape's cells, at a target position, stay within grid boundaries and do not collide with already placed shapes or the static block.
