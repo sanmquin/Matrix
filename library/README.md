@@ -127,3 +127,8 @@ Modular functions for ARC puzzles.
 ### Task 20270e3b
 - **_findComponents**: Performs a breadth-first search (BFS) on the grid to identify and isolate distinct contiguous shapes of a specific color. It returns an array of Sets, where each set contains the coordinate strings 'r,c' for one connected component.
 - **_minDist**: Calculates the minimum Manhattan distance between any cell in two sets of coordinates. This is used to determine which of two main components a smaller secondary component is spatially closest to.
+
+### Task 20a9e565
+- **solveHorizontalBands**: Analyzes input pattern cells to identify horizontal bands that repeat across a y-period. It determines a motif pattern by analyzing the x-periodicity of row segments and fills the output grid by cycling through detected band colors and repeating the motif.
+- **solveNestedFrames**: Constructs concentric frames of alternating colors. It determines the center, width, and height of the nested structure and iteratively draws nested rectangles based on the detected pattern of cells.
+- **solveStaircase**: Handles periodic staircase patterns. It calculates tile dimensions and color cycles, then either constructs a dual-column alternating staircase or scales a partial motif based on tile width increments to fill the output area.
