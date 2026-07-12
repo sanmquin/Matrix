@@ -123,3 +123,7 @@ Modular functions for ARC puzzles.
 - **getMostCommon**: Calculates the mode (most frequent item) from an array. Returns null for empty inputs.
 - **_detectTArrows**: Analyzes the grid to find T-shaped structures formed by '1' markers. It determines their orientation (UP, DOWN, LEFT, RIGHT) and identifies associated payloads or center-color properties.
 - **_cleanGrid**: Iteratively replaces placeholder/marker cells in the grid by sampling the most common color from surrounding valid blocks, refining the grid structure for further processing.
+
+### Task 20270e3b
+- **_findComponents**: Performs a breadth-first search (BFS) on the grid to identify and isolate distinct contiguous shapes of a specific color. It returns an array of Sets, where each set contains the coordinate strings 'r,c' for one connected component.
+- **_minDist**: Calculates the minimum Manhattan distance between any cell in two sets of coordinates. This is used to determine which of two main components a smaller secondary component is spatially closest to.
