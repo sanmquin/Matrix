@@ -85,3 +85,11 @@ Modular functions for ARC puzzles.
 - **findRegions**: Performs a flood-fill or BFS traversal to partition non-divider cells of the grid into distinct, isolated spatial regions.
 - **findCuts**: Analyzes the divider mask to identify continuous lines (rows or columns) of divider pixels, which act as boundaries for the internal regions.
 - **getCandidateRects**: Generates all possible valid bounding boxes within the grid that do not overlap with the divider mask, serving as candidates for the concentric fill pattern.
+
+### Task 142ca369
+- **toKey**: Serializes a 2D coordinate into a string key for use in Set and Map collections.
+- **fromKey**: Deserializes a string key back into a [row, col] coordinate tuple.
+- **findConnectedComponents**: Uses Breadth-First Search (BFS) to identify clusters of adjacent same-colored cells and group them into distinct shape objects.
+- **classifyShapes**: Performs geometric analysis on connected components to categorize them as single pixels, lines (horizontal/vertical), or L-shapes with defined bounce trajectories.
+- **simulateBilliard**: Calculates the path of a diagonal ray, handling reflections off lines and color changes upon collision with structural components.
+- **simulateLineExtension**: Projects a path from a line towards a target partner line, filling the intermediate cells.

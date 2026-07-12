@@ -1,0 +1,1 @@
+export const fromKey = (key: string): [number, number] => key.split(',').map(Number) as [number, number];
