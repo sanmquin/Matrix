@@ -136,3 +136,8 @@ Modular functions for ARC puzzles.
 ### Task 221dfab4
 - **getBackgroundColor**: Analyzes a 2D grid to identify the most frequent numerical value, which is assumed to be the background color.
 - **getColors**: Separates non-background colors into 'marker' and 'shape' categories based on their frequency count.
+
+### Task 247ef758
+- **findDividerColumn**: Scans the grid columns to find a column where all cells contain the same non-zero value, which serves as the visual separator.
+- **calculateMode**: Determines the most frequent value in an array to establish the background color of the grid borders.
+- **extractShapes**: Groups coordinates of non-zero pixels by color to define specific shapes present in the source section of the grid.
