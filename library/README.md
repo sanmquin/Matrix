@@ -103,3 +103,8 @@ Modular functions for ARC puzzles.
 ### Task 16de56c4
 - **analyzeLine**: Analyzes a collection of cell positions and colors to detect if they conform to a regularly-spaced pattern. Returns metadata including the pattern color, the specific positions, the calculated spacing, and any singleton cells that do not belong to the primary pattern.
 - **applyPattern**: Modifies a specific row or column in the grid by enforcing the geometric regularity detected by analyzeLine. It calculates potential pattern slots and fills them based on whether singletons are positioned on or off the pattern axis.
+
+### Task 1818057f
+- **isPlusPattern**: Checks if a specific cell at row 'r' and column 'c' forms a 'plus' shape with its orthogonal neighbors, where all involved cells match the provided target value.
+- **cloneGrid**: Creates a deep copy of a 2D number array to ensure the original grid remains immutable during transformation.
+- **applyPlusTransformation**: Scans the entire grid for plus patterns of a specific target value and applies a color transformation to them in a new grid instance.
