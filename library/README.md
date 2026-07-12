@@ -108,3 +108,8 @@ Modular functions for ARC puzzles.
 - **isPlusPattern**: Checks if a specific cell at row 'r' and column 'c' forms a 'plus' shape with its orthogonal neighbors, where all involved cells match the provided target value.
 - **cloneGrid**: Creates a deep copy of a 2D number array to ensure the original grid remains immutable during transformation.
 - **applyPlusTransformation**: Scans the entire grid for plus patterns of a specific target value and applies a color transformation to them in a new grid instance.
+
+### Task 195c6913
+- **getFrequencyMap**: Calculates the frequency of each color present in the provided 2D grid.
+- **findBlocks**: Scans the grid to locate all unique 2x2 blocks of the same color that are not part of the primary background colors.
+- **findMarkers**: Locates single cells on the grid boundary that match the marker color, excluding those already identified as part of the template structure.
