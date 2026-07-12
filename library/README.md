@@ -71,3 +71,10 @@ Modular functions for ARC puzzles.
 - **extractSubgrid**: Clones a specific portion of a 2D array defined by row and column boundaries.
 - **updateGrid**: Writes the contents of a repaired subgrid back into the original master grid at specific coordinates.
 - **repairInterior**: Analyzes an interior block to find the most likely repeating tile pattern and reconstructs the block to be perfectly periodic.
+
+### Task 136b0064
+- **findWhitePixel**: Scans the output region of the grid (to the right of the yellow divider column) to find the starting position (value 5). Returns the relative row and column indices.
+- **extractBlocks**: Segments the source side of the grid (left of the yellow divider) into distinct vertical blocks based on rows that contain non-zero pixel data, effectively isolating individual instruction groups.
+- **extractShapes**: Parses defined 3x3 pixel blocks into standardized string signatures. For each block, it identifies the primary color and creates a binary normalized representation to match against known movement patterns.
+- **getPathParams**: A lookup utility that maps a normalized string signature of a shape to a specific movement instruction set including orientation (Horizontal/Vertical), direction, and length.
+- **createEmptyGrid**: Initializes a 2D array of the specified dimensions, filled with zeroes.
