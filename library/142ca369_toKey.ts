@@ -1,0 +1,1 @@
+export const toKey = (r: number, c: number): string => `${r},${c}`;
