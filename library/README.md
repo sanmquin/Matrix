@@ -146,3 +146,7 @@ Modular functions for ARC puzzles.
 - **rot90**: Rotates a 2D matrix 90 degrees clockwise. It creates a new grid where the columns become rows in reverse order.
 - **fliph**: Flips a 2D matrix horizontally by reversing each row individually.
 - **getOrientations**: Generates all 8 unique geometric orientations (rotations and reflections) of a given grid, representing the Dihedral group D4.
+
+### Task 271d71e2
+- **findConnectedBoxes**: Performs a Breadth-First Search (BFS) to identify rectangular clusters of cells representing 'boxes'. It returns an array of bounding box coordinates [minRow, minCol, maxRow, maxCol] for all identified clusters.
+- **getMaroonPositions**: Creates a Set containing string representations ('row,col') of all grid cells containing the value 9, representing the rails.
