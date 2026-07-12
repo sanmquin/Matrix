@@ -99,3 +99,7 @@ Modular functions for ARC puzzles.
 - **groupContiguous**: Groups an array of integers into an array of sub-arrays, where each sub-array contains a sequence of consecutive integers.
 - **noBlockOverlap**: Checks if a set of relative cells, when translated to a specific origin (rmin, cmin), overlaps with any existing cells belonging to the main structure (blockCells).
 - **noConflict**: Verifies that a shape's cells, at a target position, stay within grid boundaries and do not collide with already placed shapes or the static block.
+
+### Task 16de56c4
+- **analyzeLine**: Analyzes a collection of cell positions and colors to detect if they conform to a regularly-spaced pattern. Returns metadata including the pattern color, the specific positions, the calculated spacing, and any singleton cells that do not belong to the primary pattern.
+- **applyPattern**: Modifies a specific row or column in the grid by enforcing the geometric regularity detected by analyzeLine. It calculates potential pattern slots and fills them based on whether singletons are positioned on or off the pattern axis.
