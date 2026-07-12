@@ -132,3 +132,7 @@ Modular functions for ARC puzzles.
 - **solveHorizontalBands**: Analyzes input pattern cells to identify horizontal bands that repeat across a y-period. It determines a motif pattern by analyzing the x-periodicity of row segments and fills the output grid by cycling through detected band colors and repeating the motif.
 - **solveNestedFrames**: Constructs concentric frames of alternating colors. It determines the center, width, and height of the nested structure and iteratively draws nested rectangles based on the detected pattern of cells.
 - **solveStaircase**: Handles periodic staircase patterns. It calculates tile dimensions and color cycles, then either constructs a dual-column alternating staircase or scales a partial motif based on tile width increments to fill the output area.
+
+### Task 221dfab4
+- **getBackgroundColor**: Analyzes a 2D grid to identify the most frequent numerical value, which is assumed to be the background color.
+- **getColors**: Separates non-background colors into 'marker' and 'shape' categories based on their frequency count.
