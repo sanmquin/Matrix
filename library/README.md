@@ -141,3 +141,8 @@ Modular functions for ARC puzzles.
 - **findDividerColumn**: Scans the grid columns to find a column where all cells contain the same non-zero value, which serves as the visual separator.
 - **calculateMode**: Determines the most frequent value in an array to establish the background color of the grid borders.
 - **extractShapes**: Groups coordinates of non-zero pixels by color to define specific shapes present in the source section of the grid.
+
+### Task 269e22fb
+- **rot90**: Rotates a 2D matrix 90 degrees clockwise. It creates a new grid where the columns become rows in reverse order.
+- **fliph**: Flips a 2D matrix horizontally by reversing each row individually.
+- **getOrientations**: Generates all 8 unique geometric orientations (rotations and reflections) of a given grid, representing the Dihedral group D4.
