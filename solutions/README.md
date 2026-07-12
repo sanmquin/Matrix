@@ -62,3 +62,6 @@ The puzzle is solved by identifying the underlying 'staircase' structure within 
 
 ### Task 1ae2feb7
 The solution identifies a vertical divider (wall) in the grid and detects color patterns on one side of that wall. It treats each color found as a group with a specific frequency (defined by its width 'N'). The algorithm then projects these color patterns onto the empty side of the wall by calculating the distance of the original color block from the wall and using modular arithmetic (pos % n === 1) to repeat the color at regular intervals. Groups are sorted by their distance from the wall to ensure that colors closer to the wall take rendering priority over those further away.
+
+### Task 21897d95
+The solution addresses a grid-based puzzle by identifying 'T-shaped' directional arrows and their corresponding payload colors (or source colors). The logic involves: (1) segmenting the grid into distinct colored blocks and identifying the core structural layout (rows and columns); (2) cleaning up noise (marker cells) to define clear boundaries; (3) detecting arrow-shaped components that indicate a 'flow' or transformation direction; and (4) mapping these directions to the surrounding blocks. Finally, it uses a transformation matrix (expansion and potential rotation) to reconstruct the output grid based on the detected flow directions and block identities.

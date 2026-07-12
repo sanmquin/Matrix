@@ -118,3 +118,8 @@ Modular functions for ARC puzzles.
 - **getMostFrequentColor**: Analyzes a specific grid column to determine which non-zero color appears most frequently. Returns both the color and its count.
 - **groupColorsBySide**: Iterates through a specific row and categorizes non-zero cell indices by color, separated into left or right collections relative to a provided wall column.
 - **paintPattern**: Applies a color pattern onto the grid based on group metadata (distance, color, frequency). Uses modular arithmetic to ensure repetition.
+
+### Task 21897d95
+- **getMostCommon**: Calculates the mode (most frequent item) from an array. Returns null for empty inputs.
+- **_detectTArrows**: Analyzes the grid to find T-shaped structures formed by '1' markers. It determines their orientation (UP, DOWN, LEFT, RIGHT) and identifies associated payloads or center-color properties.
+- **_cleanGrid**: Iteratively replaces placeholder/marker cells in the grid by sampling the most common color from surrounding valid blocks, refining the grid structure for further processing.
