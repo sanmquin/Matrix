@@ -244,3 +244,26 @@ The puzzle involves a grid divided by a vertical wall (a column of uniform color
    - If pixels exist on the right, it projects them onto the empty cells to the left of the wall.
 4. **Pattern Projection**: The projection logic uses the rule: `pos % n == 1`, where `pos` is the 1-based distance from the wall and `n` is the width of the pattern. This ensures the color repeats every `n` cells.
 5. **Layering (Z-Ordering)**: The groups are sorted by their distance from the wall (descending). By applying the painting process in this order, colors closer to the wall are processed last, effectively overriding the colors projected from further away as required by the puzzle rules.
+
+
+## Task 20270e3b
+
+### Strategy Overview
+The task requires 'stitching' two yellow (4) shapes together to close the gap between them. These shapes are marked with orange (7) pixels that serve as alignment points (ports). The solution involves identifying the mobile shape, calculating the translation vector needed to align its port with the base shape's port, and generating a tight bounding box filled with the combined geometry.
+
+### Core Components and Logic
+
+1.  **Component Identification (`_find_components`):** 
+    The code uses a Breadth-First Search (BFS) to segment all yellow (4) pixels into distinct connected components. This allows the system to isolate the main shapes from potential background noise or disconnected fragments.
+
+2.  **Port Mapping:** 
+    The algorithm identifies 'main' components by finding yellow segments adjacent to orange (7) markers. It differentiates between the 'base' (the anchor) and the 'mobile' (the piece to be moved). A sort order is used to ensure the larger component is chosen as the base.
+
+3.  **Translation Vector Calculation:** 
+    It identifies the 'face' of the mobile shape (the pixels adjacent to its orange markers). The translation vector $T$ is computed by finding the difference in coordinates between the first orange marker of the base and the corresponding first orange marker of the mobile shape.
+
+4.  **Spatial Reconciliation:** 
+    The algorithm iterates through all secondary components. It calculates the minimum distance between each component and the base versus the mobile shape using `_min_dist`. Components are moved alongside the mobile shape if they are closer to it, effectively ensuring that small associated fragments follow their respective parent shapes.
+
+5.  **Output Reconstruction:** 
+    Finally, the combined set of points is normalized by finding the new bounding box dimensions (`min_r`, `max_r`, `min_c`, `max_c`). A new grid is created, initialized with blue (1) cells (the background), and the yellow (4) shapes are placed into their new, combined coordinate positions.
