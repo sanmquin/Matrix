@@ -267,3 +267,23 @@ The task requires 'stitching' two yellow (4) shapes together to close the gap be
 
 5.  **Output Reconstruction:** 
     Finally, the combined set of points is normalized by finding the new bounding box dimensions (`min_r`, `max_r`, `min_c`, `max_c`). A new grid is created, initialized with blue (1) cells (the background), and the yellow (4) shapes are placed into their new, combined coordinate positions.
+
+
+## Task 20a9e565
+
+### Strategy Overview
+Task 20a9e565 involves extending a pattern (or 'staircase') defined by colored cells into a target area marked by gray (color 5) cells. The solution identifies the geometric logic of the input pattern—specifically whether it is a periodic horizontal band, a nested set of frames, or a staircase tile progression—and recreates that logic within the bounding box of the target area.
+
+### Key Logic Components
+1. **Target Identification:** The code locates the output dimensions by finding the bounding box of all color 5 cells (the target area).
+2. **Pattern Analysis:** It extracts the non-background, non-target cells to determine the underlying structure:
+   - **Horizontal Bands:** If all pattern rows are single-colored, the code calculates the vertical ($y$) and horizontal ($x$) periodicity of the pattern. It then maps the color cycle across the vertical period and fills the target grid based on the derived motif.
+   - **Nested Frames:** If the pattern represents concentric rectangles, the code calculates the step width and color alternation. It constructs the output by iteratively layering rectangular frames, alternating colors and increasing dimensions based on the identified pattern logic.
+   - **Staircase Tiles:** If the pattern consists of repeating columnar blocks, the code calculates the dimensions and color cycle of these blocks. It then extrapolates the staircase sequence, either maintaining a constant width (handling color transitions) or growing the width/gaps to fit the output grid.
+
+### Implementation Details
+- **Helper Functions:** 
+  - `_solve_horizontal_bands`: Uses modular arithmetic to determine placement within a repeating grid.
+  - `_solve_nested_frames`: Calculates bar widths and alternating geometric centers to build recursive frame structures.
+  - `_solve_staircase`: Extracts pattern 'tiles', determines the repetition cycle, and fills the target grid using the inferred progression logic.
+- **Pattern Recognition:** The code relies heavily on finding relative distances between rows/columns to determine periods (`x_period`, `y_period`) and color cycles (`cycle_len`). It uses mathematical rounding and modulus operations to handle cases where the output grid size deviates from the input source pattern.
