@@ -229,3 +229,18 @@ The task requires propagating a repeating color pattern along 'snake-like' paths
 
 4.  **Transformation Rule**:
     *   The output grid is effectively a transformed version of the input where the 'dark' space is replaced by a directional, alternating sequence derived from the initial 2x2 block arrangements, successfully filling the negative space of the grid.
+
+
+## Task 1ae2feb7
+
+### Logic Summary
+The puzzle involves a grid divided by a vertical wall (a column of uniform color). The task is to project colored segments found on one side of the wall onto the empty space on the opposite side. The projection follows a periodic pattern: each color group of width `N` repeats its color every `N` cells starting from the wall. If multiple color patterns overlap, those closer to the wall take priority.
+
+### Key Steps & Implementation
+1. **Identify the Wall**: The solver locates the wall by calculating the column with the highest frequency of a consistent non-zero color.
+2. **Group Identification**: For every row, the algorithm scans for colored pixels on both sides of the wall. It stores the column indices for each unique color to determine the width `N` of each segment and its distance from the wall.
+3. **Determine Projection Direction**: 
+   - If colored pixels exist on the left, it projects them onto the empty cells to the right of the wall.
+   - If pixels exist on the right, it projects them onto the empty cells to the left of the wall.
+4. **Pattern Projection**: The projection logic uses the rule: `pos % n == 1`, where `pos` is the 1-based distance from the wall and `n` is the width of the pattern. This ensures the color repeats every `n` cells.
+5. **Layering (Z-Ordering)**: The groups are sorted by their distance from the wall (descending). By applying the painting process in this order, colors closer to the wall are processed last, effectively overriding the colors projected from further away as required by the puzzle rules.
