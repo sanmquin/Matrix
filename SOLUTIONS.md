@@ -54,3 +54,35 @@ The task 135a2760 involves repairing corrupted periodic patterns within a grid s
 - **Detection:** Converts the grid into a structured coordinate system based on the border lines.
 - **Statistical Inference:** Uses the frequency of values in periodic offsets to filter out noise or corruption.
 - **Restoration:** Replaces the panel content with a perfectly tiled version of the best-fit repeating pattern.
+
+
+## Task 136b0064
+
+### Strategy Overview
+The task 136b0064 involves transforming a series of encoded geometric shapes found on the left side of a grid into a single continuous path starting from a designated 'white pixel' (value 5) on the right side of the grid. The grid is split into two halves by a vertical yellow column (value 4). The shapes on the left side function as instructions for how to extend the path from the starting point.
+
+### Key Components & Logic
+
+1.  **Grid Parsing**:
+    *   **Separator Detection**: The code identifies the yellow column (value 4) to separate the instruction area (left) from the output canvas (right).
+    *   **Start Point**: It locates the 'white' pixel (value 5), which marks the beginning of the path drawing.
+    *   **Block Identification**: The code scans the input for non-zero blocks (separated by empty rows) to group the instruction patterns into sequential steps.
+
+2.  **Shape Decoding (`SHAPE_MAP`)**:
+    *   The task defines a set of 3x3 pixel patterns. Each pattern corresponds to a specific movement rule:
+        *   **Type A (Red U-shape)**: Move 2 units horizontally to the LEFT.
+        *   **Type B (Purple V-shape)**: Move 2 units vertically DOWN.
+        *   **Type C (Blue shape)**: Move 3 units horizontally to the RIGHT.
+        *   **Type D (Green shape)**: Move 4 units horizontally to the LEFT.
+    *   The input uses these patterns to provide a sequence of movements that the path must follow.
+
+3.  **Path Execution**:
+    *   The solver extracts all shapes in sequence (processing the left column of instruction blocks then the right column of instruction blocks).
+    *   It initializes a result grid of the same dimensions as the output area.
+    *   It places the starting white pixel.
+    *   It iterates through the sequence of instructions, updating the current row (`cur_r`) and column (`cur_c`) based on the orientation (vertical vs. horizontal) and direction (left vs. right) defined in the shape mapping.
+    *   For every movement, it fills the corresponding pixels in the output grid with the shape's original color.
+
+### Core Patterns
+- The input acts as a **symbolic instruction set**. The geometry of the shapes (3x3 blocks) encodes relative spatial movements (displacement and direction).
+- The solution demonstrates an algorithmic approach: **Deconstruct → Map → Reconstruct**. It interprets pixel arrangements as command codes, then performs a simulation to draw the final resulting line path.
