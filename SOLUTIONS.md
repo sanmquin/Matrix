@@ -229,3 +229,213 @@ The task requires propagating a repeating color pattern along 'snake-like' paths
 
 4.  **Transformation Rule**:
     *   The output grid is effectively a transformed version of the input where the 'dark' space is replaced by a directional, alternating sequence derived from the initial 2x2 block arrangements, successfully filling the negative space of the grid.
+
+
+## Task 1ae2feb7
+
+### Logic Summary
+The puzzle involves a grid divided by a vertical wall (a column of uniform color). The task is to project colored segments found on one side of the wall onto the empty space on the opposite side. The projection follows a periodic pattern: each color group of width `N` repeats its color every `N` cells starting from the wall. If multiple color patterns overlap, those closer to the wall take priority.
+
+### Key Steps & Implementation
+1. **Identify the Wall**: The solver locates the wall by calculating the column with the highest frequency of a consistent non-zero color.
+2. **Group Identification**: For every row, the algorithm scans for colored pixels on both sides of the wall. It stores the column indices for each unique color to determine the width `N` of each segment and its distance from the wall.
+3. **Determine Projection Direction**: 
+   - If colored pixels exist on the left, it projects them onto the empty cells to the right of the wall.
+   - If pixels exist on the right, it projects them onto the empty cells to the left of the wall.
+4. **Pattern Projection**: The projection logic uses the rule: `pos % n == 1`, where `pos` is the 1-based distance from the wall and `n` is the width of the pattern. This ensures the color repeats every `n` cells.
+5. **Layering (Z-Ordering)**: The groups are sorted by their distance from the wall (descending). By applying the painting process in this order, colors closer to the wall are processed last, effectively overriding the colors projected from further away as required by the puzzle rules.
+
+
+## Task 20270e3b
+
+### Strategy Overview
+The task requires 'stitching' two yellow (4) shapes together to close the gap between them. These shapes are marked with orange (7) pixels that serve as alignment points (ports). The solution involves identifying the mobile shape, calculating the translation vector needed to align its port with the base shape's port, and generating a tight bounding box filled with the combined geometry.
+
+### Core Components and Logic
+
+1.  **Component Identification (`_find_components`):** 
+    The code uses a Breadth-First Search (BFS) to segment all yellow (4) pixels into distinct connected components. This allows the system to isolate the main shapes from potential background noise or disconnected fragments.
+
+2.  **Port Mapping:** 
+    The algorithm identifies 'main' components by finding yellow segments adjacent to orange (7) markers. It differentiates between the 'base' (the anchor) and the 'mobile' (the piece to be moved). A sort order is used to ensure the larger component is chosen as the base.
+
+3.  **Translation Vector Calculation:** 
+    It identifies the 'face' of the mobile shape (the pixels adjacent to its orange markers). The translation vector $T$ is computed by finding the difference in coordinates between the first orange marker of the base and the corresponding first orange marker of the mobile shape.
+
+4.  **Spatial Reconciliation:** 
+    The algorithm iterates through all secondary components. It calculates the minimum distance between each component and the base versus the mobile shape using `_min_dist`. Components are moved alongside the mobile shape if they are closer to it, effectively ensuring that small associated fragments follow their respective parent shapes.
+
+5.  **Output Reconstruction:** 
+    Finally, the combined set of points is normalized by finding the new bounding box dimensions (`min_r`, `max_r`, `min_c`, `max_c`). A new grid is created, initialized with blue (1) cells (the background), and the yellow (4) shapes are placed into their new, combined coordinate positions.
+
+
+## Task 20a9e565
+
+### Strategy Overview
+Task 20a9e565 involves extending a pattern (or 'staircase') defined by colored cells into a target area marked by gray (color 5) cells. The solution identifies the geometric logic of the input pattern—specifically whether it is a periodic horizontal band, a nested set of frames, or a staircase tile progression—and recreates that logic within the bounding box of the target area.
+
+### Key Logic Components
+1. **Target Identification:** The code locates the output dimensions by finding the bounding box of all color 5 cells (the target area).
+2. **Pattern Analysis:** It extracts the non-background, non-target cells to determine the underlying structure:
+   - **Horizontal Bands:** If all pattern rows are single-colored, the code calculates the vertical ($y$) and horizontal ($x$) periodicity of the pattern. It then maps the color cycle across the vertical period and fills the target grid based on the derived motif.
+   - **Nested Frames:** If the pattern represents concentric rectangles, the code calculates the step width and color alternation. It constructs the output by iteratively layering rectangular frames, alternating colors and increasing dimensions based on the identified pattern logic.
+   - **Staircase Tiles:** If the pattern consists of repeating columnar blocks, the code calculates the dimensions and color cycle of these blocks. It then extrapolates the staircase sequence, either maintaining a constant width (handling color transitions) or growing the width/gaps to fit the output grid.
+
+### Implementation Details
+- **Helper Functions:** 
+  - `_solve_horizontal_bands`: Uses modular arithmetic to determine placement within a repeating grid.
+  - `_solve_nested_frames`: Calculates bar widths and alternating geometric centers to build recursive frame structures.
+  - `_solve_staircase`: Extracts pattern 'tiles', determines the repetition cycle, and fills the target grid using the inferred progression logic.
+- **Pattern Recognition:** The code relies heavily on finding relative distances between rows/columns to determine periods (`x_period`, `y_period`) and color cycles (`cycle_len`). It uses mathematical rounding and modulus operations to handle cases where the output grid size deviates from the input source pattern.
+
+
+## Task 21897d95
+
+### Strategy Overview
+This puzzle involves identifying colored regions in a grid and "flow" operations dictated by T-shaped markers (arrows). The logic transforms the input by processing these markers to transfer colors between adjacent regions or rotating the grid structure.
+
+### Core Logic and Steps
+1.  **Region Identification:** The solver performs connected-components analysis to group the grid into distinct colored blocks. It identifies "marker" cells (color 1) which form the arrows.
+2.  **Arrow Detection:** The function `_detect_t_arrows` scans the grid for T-shaped patterns (three cells surrounding a central cell). 
+    *   The orientation of the "T" determines the arrow's direction.
+    *   The central cell is checked for its color: if it is not 1, it acts as a 'payload' (the color to be transferred).
+3.  **Grid Cleaning:** Since arrows are overlaid on the blocks, `_clean_grid` replaces these marker cells with the dominant color of their immediate neighborhood, effectively reconstructing the underlying geometric structure of the grid.
+4.  **Flow Application:** The solver uses the detected arrow direction to find an adjacent region. The target region's color is then updated (overwritten) by the flow color, which is either the color of the payload or the source region's original color.
+5.  **Output Transformation:**
+    *   For **Square Grids**: It uses a per-pixel remapping approach to handle diagonal boundaries.
+    *   For **Non-Square Grids**: It performs a grid rotation (90 degrees, CW or CCW) based on the aspect ratio and detected block patterns, then expands the modified block grid back into the final output dimensions.
+
+### Key Helpers
+*   `_detect_t_arrows`: Identifies the direction, location, and potential color payload of all arrow markers.
+*   `_clean_grid`: A recovery heuristic that fills in "holes" left by markers using spatial consensus (the most common neighbor color).
+*   `_solve_square`: A specialized function for uniform square grids that avoids block-alignment issues by operating directly on individual pixels.
+
+
+## Task 221dfab4
+
+### Strategy Overview
+The task involves identifying a 'marker' (a small set of colored pixels) on the edge of the grid that initiates a 'beam' traveling across the grid. This beam follows a periodic 6-step pattern. When the beam hits a specific phase (index 4 in the 0-5 cycle), it interacts with existing shapes in the grid by recoloring them to green (3).
+
+### Core Logic
+1. **Identify Background and Colors**: The solution first identifies the background color (most frequent) and distinguishes between the 'marker color' (least frequent among non-background cells) and the 'shape color' (most frequent among non-background cells).
+2. **Determine Beam Direction**: By grouping the marker coordinates, the code determines if the marker lies on a row (horizontal marker causing a vertical beam) or a column (vertical marker causing a horizontal beam).
+3. **Beam Propagation**: The beam travels across the grid starting from the marker's edge. It moves cell by cell in the determined direction, tracking a `phase` using `d % 6`.
+4. **Pattern Application**:
+   - **Phase 0 & 2**: The beam line is painted with the `marker_color`.
+   - **Phase 4**: The beam line is painted green (`3`).
+   - **Interaction**: At `phase == 4`, the logic checks if any 'shape' pixels lie on the current beam row/column. If they do, those shape pixels are also turned green (`3`).
+   - **Other Phases**: The beam line is reset/painted with the background color.
+
+### Key Functions/Variables
+- `bg`: Most frequent color in the grid.
+- `marker_cells` & `shape_set`: Categorizes grid pixels into the triggering mechanism and the targets to be modified.
+- `phase`: A modulo-6 counter that dictates the beam's visual state as it propagates.
+- `step`: Determines the direction (+1 or -1) the beam moves based on whether the marker is on the lower or upper half of the grid.
+
+### Rule Summary
+The beam acts as a scanner. The repetition pattern (Marker-BG-Marker-BG-Green-BG) means every 6th step is a 'Green' event that transforms any object segment it overlaps into a green segment.
+
+
+## Task 247ef758
+
+### Strategy Summary
+The task 247ef758 involves transforming an input grid that contains 'shapes' on the left side and 'marker' coordinates defined by the borders on the right side. The goal is to clear the original shapes and reproduce them at the grid intersections defined by the rows marked on the left border and the columns marked on the top border, matching the shape's color to the corresponding border marker.
+
+### Core Logic and Steps
+1. **Identify Grid Sections**: The code identifies a vertical divider (a column of identical, non-zero values) which splits the grid into the 'source' area (left) and the 'target' area (right).
+2. **Extract Markers**: It scans the left and top borders of the target area. Any value differing from the most common border color is treated as a marker, mapping a specific color to a set of row indices (`left_markers`) or column indices (`top_markers`).
+3. **Extract Shapes**: It identifies distinct colored shapes in the left area, grouping pixels by their color.
+4. **Shape Normalization**: For each shape found, the code calculates its geometric center. It converts the absolute coordinates of the pixels into relative coordinates (`pixel_row - center_row`, `pixel_col - center_col`) to allow the shape to be moved while maintaining its relative structure.
+5. **Placement**: For every color that has markers on both the left and top borders, the code:
+   - Erases the original shape from the left area.
+   - Iterates through all intersections (`marker_row`, `marker_col`).
+   - Projects the normalized shape pixels onto the grid centered at each intersection, ensuring the new shape is placed correctly within the target bounds.
+
+### Key Patterns and Transformations
+- **Intersection Logic**: The logic assumes that if a specific color exists in both border sets, it serves as a coordinate signal. The intersection of the row defined by the left border and the column defined by the top border acts as the anchor point (center) for the shape.
+- **Overwriting**: The shapes are processed in a specific order (sorted by their original vertical position) to ensure that when shapes overlap in the target area, the intended visibility is maintained.
+- **Geometric Centering**: By calculating the bounding box and shifting coordinates to a relative system, the code ensures that shapes are perfectly reconstructed regardless of their original position or size.
+
+
+## Task 269e22fb
+
+### Logic and Strategy
+The ARC task 269e22fb involves identifying a hidden 20x20 structure within a smaller input grid. The core insight is that every input grid is a sub-region (a crop) of a single, fixed, global 20x20 pattern (defined as `MASTER` in the code). The solution strategy is to brute-force all possible transformations and sub-grid alignments of the `MASTER` pattern to match the provided input grid.
+
+### Key Components
+*   **The Master Pattern**: A static 20x20 grid containing values 7 and 8. The task assumes that all input grids are derived from this matrix.
+*   **Orientations (`_orientations`)**: Since the target pattern can be rotated or reflected, the code generates all 8 symmetries of the `MASTER` grid (4 rotations $\times$ 2 reflections/flips).
+*   **Color Mapping**: The input grids use two colors. Because the original `MASTER` grid uses colors 7 and 8, the solver iterates through the two possible color mappings (swapping the input colors to match the master colors) to account for variations in palette assignment.
+*   **Sliding Window Search (`solve`)**: 
+    1. It iterates through all 8 orientations of the `MASTER` grid.
+    2. It tests both possible color assignments.
+    3. For every orientation, it treats the master grid as a search space and checks every possible sub-rectangle (window) of size `rows x cols` (the dimensions of the input grid).
+    4. If the sub-rectangle matches the input grid perfectly, it returns that full 20x20 transformed grid as the output.
+
+### Pattern Transformations
+*   **Rotations**: The `_rot90` helper function rotates the grid 90 degrees clockwise.
+*   **Reflections**: The `_fliph` helper function performs a horizontal reflection.
+*   **Alignment**: The nested loops `range(21 - rows)` and `range(21 - cols)` effectively perform a sliding window scan across the 20x20 space to find where the input grid "fits" into the larger master structure.
+
+
+## Task 271d71e2
+
+### Strategy Overview
+The solution treats the ARC task 271d71e2 as a physical simulation where rectangular 'boxes' move along 'rails' (maroon lines). The core logic is to detect each box, determine its potential slide distance based on the position of distant rail lines, and update its interior state (filling grey cells with orange cells) proportionally to the distance moved. 
+
+### Core Steps
+1. **Box Detection**: The code uses a BFS (Breadth-First Search) approach to identify contiguous regions of '0' (border), '5' (grey interior), and '7' (orange interior). It computes the bounding box for each structure.
+2. **Movement Analysis**: For every box, it checks the four cardinal directions to see if it is adjacent to a continuous 'maroon rail' (color 9) of equal width or height. If such a rail exists, it identifies the distance to the next rail in that direction.
+3. **Constraint Resolution**: The movement distance is capped by the number of grey cells currently inside the box, effectively limiting how far it can slide before it is 'full'.
+4. **Grid Reconstruction**:
+   - **Slide**: The box coordinates are shifted based on the calculated movement.
+   - **Fill**: The box interior is populated with orange cells (7) based on a specific sweep order (e.g., top-to-bottom for UP-moving boxes, right-to-left for RIGHT-moving boxes). The number of orange cells becomes `original_orange_count + movement`.
+   - **Render**: The new rail positions are updated on the grid, ensuring the 'far' and 'near' rails are maintained according to the simulation result.
+
+### Patterns and Transformations
+- **Directional Fill**: The filling pattern is deterministic and dependent on the direction of movement. This mimics a 'sliding' mechanism where the new orange space is created at the side of the box opposite to the movement direction.
+- **Rail Dynamics**: The maroon lines (color 9) act as tracks. When a box moves, the rail configuration is updated to reflect the new box position, effectively 'clamping' the box between its start and end points.
+- **Constraint Rules**: The transformation is strictly limited by the available grey (empty) space, implying that a box cannot slide further than its capacity to fill its interior with orange cells.
+
+
+## Task 28a6681f
+
+### Strategy Overview
+The task 28a6681f, "Staircase Interior Fill," involves identifying and filling the interior gaps of staircase-like structures with the color blue (1). The core constraint is that the total count of blue pixels in the output must equal the count of blue pixels found in the input grid.
+
+### Logic Steps
+1. **Pre-processing**: The original blue pixels are removed from the input grid, creating a 'clean' background. The number of blue pixels ($N$) is cached to act as a quota.
+2. **Cell Classification**: Every empty cell (0) is classified based on its horizontal neighbors:
+   - **Type A**: Cells positioned between two non-background cells of the *same color*. These represent the "interior" of the staircase.
+   - **Type B**: Cells that have a wall to their left but no corresponding same-color wall to the right. These represent "open side" extensions.
+3. **Validation**: Since Type A cells could represent gaps anywhere, the algorithm applies a spatial constraint: a Type A cell is only considered valid if it sits on the bottom edge of the grid or directly on top of another filled interior cell (or wall). This ensures the fill propagates upward from the base of the structure.
+4. **Filling Strategy**:
+   - All validated Type A cells are filled first, provided the pixel quota $N$ is not exceeded.
+   - Any remaining pixel count is filled into Type B cells, starting from the bottom of the grid and moving upwards (row by row), until the total count matches $N$.
+
+### Key Mechanisms
+- **Bottom-to-Top Filling**: By iterating through coordinates with a negative row index sort key (`-x[0]`), the algorithm ensures the staircase fills from the ground up, maintaining the structure's physical integrity.
+- **Conservation of Matter**: The algorithm strictly enforces the total blue count ($N$), using it as a stopping condition for both Type A and Type B filling processes. This ensures the output is neither over-filled nor under-filled.
+
+
+## Task 291dc1e1
+
+### Overview
+This solution addresses ARC task 291dc1e1 by treating the input grid as a layout containing scattered objects (blocks) defined by background-color (8) boundaries. The goal is to identify these objects, sort them based on their original spatial configuration relative to colored borders, and stack them vertically in a centered format.
+
+### Core Strategy
+1.  **Coordinate & Orientation Sensing**: The code identifies a corner of the grid containing a 0, then checks the adjacent colored borders (Blue/1 and Red/2) to determine the reading order and orientation. 
+2.  **Object Extraction**: Using Breadth-First Search (BFS), the algorithm isolates connected non-background regions into individual blocks, capturing their spatial bounding box coordinates.
+3.  **Spatial Sorting**: 
+    *   It determines a 'Primary' axis (along the blue border) and a 'Secondary' axis (along the red border).
+    *   It groups objects into bands (rows or columns) based on their positions and sorts them within those groups according to the identified grid orientation.
+4.  **Transformation & Stacking**: If the primary axis is vertical (column-based), objects are rotated 90° CCW to ensure they are presented horizontally. Finally, all objects are stacked vertically, centered horizontally within a canvas defined by the widest object.
+
+### Key Helper Functions
+*   `_group_by_rows` / `_group_by_cols`: These functions perform range clustering to identify 'bands' of objects. By calculating the row/column spans of objects and merging overlapping intervals, the code organizes the objects into the sequence they appear on the input grid.
+*   **BFS Logic**: The nested loop iterates through the interior grid to find connected components of non-8 values, treating them as individual entities.
+*   **Rotation & Centering**: The use of `np.rot90` adjusts the orientation of objects, while simple arithmetic (`(max_w - w) // 2`) handles the padding required for centering the blocks in the output grid.
+
+### Patterns Identified
+*   **Reading Order**: The placement of colors 1 and 2 on the borders serves as a coordinate system mapping. If blue is on the row, the layout follows a left-to-right (or right-to-left) progression; if on the column, it follows a top-to-bottom (or bottom-to-top) progression.
+*   **Spatial Context**: The task assumes that objects should be re-ordered based on their original grid position and transformed into a unified, centered vertical list.
