@@ -396,3 +396,23 @@ The solution treats the ARC task 271d71e2 as a physical simulation where rectang
 - **Directional Fill**: The filling pattern is deterministic and dependent on the direction of movement. This mimics a 'sliding' mechanism where the new orange space is created at the side of the box opposite to the movement direction.
 - **Rail Dynamics**: The maroon lines (color 9) act as tracks. When a box moves, the rail configuration is updated to reflect the new box position, effectively 'clamping' the box between its start and end points.
 - **Constraint Rules**: The transformation is strictly limited by the available grey (empty) space, implying that a box cannot slide further than its capacity to fill its interior with orange cells.
+
+
+## Task 28a6681f
+
+### Strategy Overview
+The task 28a6681f, "Staircase Interior Fill," involves identifying and filling the interior gaps of staircase-like structures with the color blue (1). The core constraint is that the total count of blue pixels in the output must equal the count of blue pixels found in the input grid.
+
+### Logic Steps
+1. **Pre-processing**: The original blue pixels are removed from the input grid, creating a 'clean' background. The number of blue pixels ($N$) is cached to act as a quota.
+2. **Cell Classification**: Every empty cell (0) is classified based on its horizontal neighbors:
+   - **Type A**: Cells positioned between two non-background cells of the *same color*. These represent the "interior" of the staircase.
+   - **Type B**: Cells that have a wall to their left but no corresponding same-color wall to the right. These represent "open side" extensions.
+3. **Validation**: Since Type A cells could represent gaps anywhere, the algorithm applies a spatial constraint: a Type A cell is only considered valid if it sits on the bottom edge of the grid or directly on top of another filled interior cell (or wall). This ensures the fill propagates upward from the base of the structure.
+4. **Filling Strategy**:
+   - All validated Type A cells are filled first, provided the pixel quota $N$ is not exceeded.
+   - Any remaining pixel count is filled into Type B cells, starting from the bottom of the grid and moving upwards (row by row), until the total count matches $N$.
+
+### Key Mechanisms
+- **Bottom-to-Top Filling**: By iterating through coordinates with a negative row index sort key (`-x[0]`), the algorithm ensures the staircase fills from the ground up, maintaining the structure's physical integrity.
+- **Conservation of Matter**: The algorithm strictly enforces the total blue count ($N$), using it as a stopping condition for both Type A and Type B filling processes. This ensures the output is neither over-filled nor under-filled.
