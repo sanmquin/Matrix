@@ -287,3 +287,25 @@ Task 20a9e565 involves extending a pattern (or 'staircase') defined by colored c
   - `_solve_nested_frames`: Calculates bar widths and alternating geometric centers to build recursive frame structures.
   - `_solve_staircase`: Extracts pattern 'tiles', determines the repetition cycle, and fills the target grid using the inferred progression logic.
 - **Pattern Recognition:** The code relies heavily on finding relative distances between rows/columns to determine periods (`x_period`, `y_period`) and color cycles (`cycle_len`). It uses mathematical rounding and modulus operations to handle cases where the output grid size deviates from the input source pattern.
+
+
+## Task 21897d95
+
+### Strategy Overview
+This puzzle involves identifying colored regions in a grid and "flow" operations dictated by T-shaped markers (arrows). The logic transforms the input by processing these markers to transfer colors between adjacent regions or rotating the grid structure.
+
+### Core Logic and Steps
+1.  **Region Identification:** The solver performs connected-components analysis to group the grid into distinct colored blocks. It identifies "marker" cells (color 1) which form the arrows.
+2.  **Arrow Detection:** The function `_detect_t_arrows` scans the grid for T-shaped patterns (three cells surrounding a central cell). 
+    *   The orientation of the "T" determines the arrow's direction.
+    *   The central cell is checked for its color: if it is not 1, it acts as a 'payload' (the color to be transferred).
+3.  **Grid Cleaning:** Since arrows are overlaid on the blocks, `_clean_grid` replaces these marker cells with the dominant color of their immediate neighborhood, effectively reconstructing the underlying geometric structure of the grid.
+4.  **Flow Application:** The solver uses the detected arrow direction to find an adjacent region. The target region's color is then updated (overwritten) by the flow color, which is either the color of the payload or the source region's original color.
+5.  **Output Transformation:**
+    *   For **Square Grids**: It uses a per-pixel remapping approach to handle diagonal boundaries.
+    *   For **Non-Square Grids**: It performs a grid rotation (90 degrees, CW or CCW) based on the aspect ratio and detected block patterns, then expands the modified block grid back into the final output dimensions.
+
+### Key Helpers
+*   `_detect_t_arrows`: Identifies the direction, location, and potential color payload of all arrow markers.
+*   `_clean_grid`: A recovery heuristic that fills in "holes" left by markers using spatial consensus (the most common neighbor color).
+*   `_solve_square`: A specialized function for uniform square grids that avoids block-alignment issues by operating directly on individual pixels.
