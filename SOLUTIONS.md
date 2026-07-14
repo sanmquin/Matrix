@@ -86,3 +86,30 @@ The task 136b0064 involves transforming a series of encoded geometric shapes fou
 ### Core Patterns
 - The input acts as a **symbolic instruction set**. The geometry of the shapes (3x3 blocks) encodes relative spatial movements (displacement and direction).
 - The solution demonstrates an algorithmic approach: **Deconstruct → Map → Reconstruct**. It interprets pixel arrangements as command codes, then performs a simulation to draw the final resulting line path.
+
+
+## Task 13e47133
+
+### Strategy Overview
+The puzzle requires filling grid regions—separated by a specific 'divider' color—with concentric rectangle patterns based on seed pixels (dots) provided within those regions. The solution identifies the background and divider colors, segments the grid into isolated regions, determines the geometry of available sub-rectangles, and applies a periodic color-filling rule based on the distance from the edges of these rectangles.
+
+### Core Logic Steps
+1. **Color Identification:** 
+   - Counts pixel frequencies to identify the `bg_color` (most frequent).
+   - Scans rows and columns to find the longest contiguous segment of a non-background color, designating it the `divider_color`.
+2. **Grid Segmentation:** 
+   - Uses Breadth-First Search (BFS) to identify distinct, disconnected regions separated by the `divider_color`.
+   - Identifies `cut_rows` and `cut_cols` (the lines defined by the divider) to bound valid rectangular spaces for filling.
+3. **Bounding Box Extraction:** 
+   - Determines candidate rectangles within the segmented areas that do not contain the divider color.
+4. **Pattern Generation:** 
+   - For each region, it identifies 'dots' (seed pixels with non-background/non-divider colors).
+   - Calculates the 'distance' of these dots from the edges of the candidate rectangles (`min(r-r_s, r_e-r, c-c_s, c_e-c)`). 
+   - Uses the distance of known seed pixels to determine a repeating color cycle.
+5. **Filling:** 
+   - Calculates the maximum distance for every pixel in a region from its nearest boundary and assigns a color based on the cycle derived from the seed pixels: `cycle_colors[max_d % cycle_len]`.
+
+### Key Patterns
+- **Concentricity:** The code assumes that pixels belonging to the same 'layer' of a rectangular shape share the same color.
+- **Divider Geometry:** The divider acts as an impassable barrier, effectively partitioning the grid into independent sub-problems (the regions).
+- **Distance-based Logic:** The filling pattern is essentially a 'Manhattan' distance to the nearest rectangle boundary, mapped to a circular sequence of colors found within the region.
