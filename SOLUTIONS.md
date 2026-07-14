@@ -113,3 +113,26 @@ The puzzle requires filling grid regions—separated by a specific 'divider' col
 - **Concentricity:** The code assumes that pixels belonging to the same 'layer' of a rectangular shape share the same color.
 - **Divider Geometry:** The divider acts as an impassable barrier, effectively partitioning the grid into independent sub-problems (the regions).
 - **Distance-based Logic:** The filling pattern is essentially a 'Manhattan' distance to the nearest rectangle boundary, mapped to a circular sequence of colors found within the region.
+
+
+## Task 142ca369
+
+### Logic and Strategy
+The ARC task 142ca369 involves simulating 'billiard ball' trajectories on a grid. Each task input contains colored shapes ('L' shapes, single pixels, and horizontal/vertical lines). The goal is to draw paths (trajectories) starting from the corner of 'L' shapes. These paths travel diagonally, bouncing off line segments and reflecting based on the positions of single pixels of the same color.
+
+### Core Steps
+1. **Grid Analysis (Connected Components):** The solver uses a BFS approach to group connected non-zero pixels. It classifies these shapes into four types: `pixel` (size 1), `L` (3-pixel shape with a corner), `hline`, and `vline`.
+2. **Classification Logic:**
+    * **L-shapes:** Identified by their bounding box and the presence of a corner cell adjacent to two others. The 'away_dir' (initial vector) is determined by the vector pointing away from the corner.
+    * **Lines:** Identified by their orientation (rspan or cspan = 0).
+    * **Pixels:** Single isolated cells used as reflection markers.
+3. **Billiard Simulation (`fire_billiard` function):**
+    * The simulation starts from the 'L' shape corner.
+    * It moves step-by-step diagonally.
+    * **Collisions:** If the ball encounters an `occupied` cell (like a line segment), it performs a bounce: if it hits a `vline`, the horizontal vector component flips; if it hits an `hline`, the vertical vector component flips.
+    * **Reflection:** If the ball reaches the row or column of a `pixel` of the same color, it reflects (reverses the direction of that component).
+4. **Handling Unhit Shapes:** If a line segment remains unvisited by a trajectory, the algorithm attempts to extend it toward other same-colored elements by calculating a path based on the line's position relative to the grid center and its partners.
+
+### Key Patterns
+* **Reflection Rules:** The game treats lines as hard barriers and single pixels as triggers for reflection, suggesting a physics-like interaction where the ball's trajectory is constrained by the grid's geometry.
+* **Connectivity:** The simulation treats color as a key property; only elements of the same color interact to influence the path of a specific ball.
