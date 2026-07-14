@@ -355,3 +355,24 @@ The task 247ef758 involves transforming an input grid that contains 'shapes' on 
 - **Intersection Logic**: The logic assumes that if a specific color exists in both border sets, it serves as a coordinate signal. The intersection of the row defined by the left border and the column defined by the top border acts as the anchor point (center) for the shape.
 - **Overwriting**: The shapes are processed in a specific order (sorted by their original vertical position) to ensure that when shapes overlap in the target area, the intended visibility is maintained.
 - **Geometric Centering**: By calculating the bounding box and shifting coordinates to a relative system, the code ensures that shapes are perfectly reconstructed regardless of their original position or size.
+
+
+## Task 269e22fb
+
+### Logic and Strategy
+The ARC task 269e22fb involves identifying a hidden 20x20 structure within a smaller input grid. The core insight is that every input grid is a sub-region (a crop) of a single, fixed, global 20x20 pattern (defined as `MASTER` in the code). The solution strategy is to brute-force all possible transformations and sub-grid alignments of the `MASTER` pattern to match the provided input grid.
+
+### Key Components
+*   **The Master Pattern**: A static 20x20 grid containing values 7 and 8. The task assumes that all input grids are derived from this matrix.
+*   **Orientations (`_orientations`)**: Since the target pattern can be rotated or reflected, the code generates all 8 symmetries of the `MASTER` grid (4 rotations $\times$ 2 reflections/flips).
+*   **Color Mapping**: The input grids use two colors. Because the original `MASTER` grid uses colors 7 and 8, the solver iterates through the two possible color mappings (swapping the input colors to match the master colors) to account for variations in palette assignment.
+*   **Sliding Window Search (`solve`)**: 
+    1. It iterates through all 8 orientations of the `MASTER` grid.
+    2. It tests both possible color assignments.
+    3. For every orientation, it treats the master grid as a search space and checks every possible sub-rectangle (window) of size `rows x cols` (the dimensions of the input grid).
+    4. If the sub-rectangle matches the input grid perfectly, it returns that full 20x20 transformed grid as the output.
+
+### Pattern Transformations
+*   **Rotations**: The `_rot90` helper function rotates the grid 90 degrees clockwise.
+*   **Reflections**: The `_fliph` helper function performs a horizontal reflection.
+*   **Alignment**: The nested loops `range(21 - rows)` and `range(21 - cols)` effectively perform a sliding window scan across the 20x20 space to find where the input grid "fits" into the larger master structure.
