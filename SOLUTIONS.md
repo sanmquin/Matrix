@@ -136,3 +136,29 @@ The ARC task 142ca369 involves simulating 'billiard ball' trajectories on a grid
 ### Key Patterns
 * **Reflection Rules:** The game treats lines as hard barriers and single pixels as triggers for reflection, suggesting a physics-like interaction where the ball's trajectory is constrained by the grid's geometry.
 * **Connectivity:** The simulation treats color as a key property; only elements of the same color interact to influence the path of a specific ball.
+
+
+## Task 16b78196
+
+### Strategy Overview
+The task involves reassembling "plug-in" shapes into "notches" located on a large central block (the wall). The strategy involves three main phases: identifying shapes and notches, matching shapes to notches based on geometry, and stacking remaining shapes alongside these matches.
+
+### Key Components
+1.  **Shape Detection (`_find_shapes`)**: Uses BFS to isolate non-background, non-block components. Each shape is characterized by its relative cell coordinates, bounding box, and location relative to the central block (e.g., left/right for vertical blocks, top/bottom for horizontal).
+2.  **Notch Detection (`_find_notches`)**: Identifies structural gaps in the central block. 
+    *   For **vertical blocks**, it scans rows for inward deviations from the expected column boundaries.
+    *   For **horizontal blocks**, it scans columns for inward deviations from the expected row boundaries.
+3.  **Matching & Stacking (`_try_plug_match`, `_tetris_stack`)**:
+    *   **Plug Matching**: Tries to fit shapes exactly into the detected notches by verifying if the shape's geometry aligns with the notch profile.
+    *   **Tetris Stacking**: Once a primary shape (a "plug") is anchored in a notch, other shapes of the same group are "pushed" toward the block boundary until they collide with the block or already placed shapes.
+
+### Core Logic Steps
+*   **Grouping**: 
+    *   **Horizontal**: Groups shapes by their bounding-box width. Shapes are assigned to the notch that fits their width and matches their relative position (above/below).
+    *   **Vertical**: Assigns a "plug" shape to each available notch and then distributes remaining shapes to the group whose notch it is closest to, prioritizing filling the notches first.
+*   **Placement**: Finalizes coordinates for all shapes based on the calculated offsets to ensure they interlock correctly with the central block without overlapping the block or other placed shapes.
+
+### Patterns Identified
+- The central block acts as a static anchor.
+- Shapes are designed to fill specific irregular voids in the block's perimeter.
+- Horizontal configurations favor grouping by width, while vertical configurations favor a proximity-based assignment to notch "plugs."
