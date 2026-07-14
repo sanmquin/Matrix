@@ -416,3 +416,26 @@ The task 28a6681f, "Staircase Interior Fill," involves identifying and filling t
 ### Key Mechanisms
 - **Bottom-to-Top Filling**: By iterating through coordinates with a negative row index sort key (`-x[0]`), the algorithm ensures the staircase fills from the ground up, maintaining the structure's physical integrity.
 - **Conservation of Matter**: The algorithm strictly enforces the total blue count ($N$), using it as a stopping condition for both Type A and Type B filling processes. This ensures the output is neither over-filled nor under-filled.
+
+
+## Task 291dc1e1
+
+### Overview
+This solution addresses ARC task 291dc1e1 by treating the input grid as a layout containing scattered objects (blocks) defined by background-color (8) boundaries. The goal is to identify these objects, sort them based on their original spatial configuration relative to colored borders, and stack them vertically in a centered format.
+
+### Core Strategy
+1.  **Coordinate & Orientation Sensing**: The code identifies a corner of the grid containing a 0, then checks the adjacent colored borders (Blue/1 and Red/2) to determine the reading order and orientation. 
+2.  **Object Extraction**: Using Breadth-First Search (BFS), the algorithm isolates connected non-background regions into individual blocks, capturing their spatial bounding box coordinates.
+3.  **Spatial Sorting**: 
+    *   It determines a 'Primary' axis (along the blue border) and a 'Secondary' axis (along the red border).
+    *   It groups objects into bands (rows or columns) based on their positions and sorts them within those groups according to the identified grid orientation.
+4.  **Transformation & Stacking**: If the primary axis is vertical (column-based), objects are rotated 90° CCW to ensure they are presented horizontally. Finally, all objects are stacked vertically, centered horizontally within a canvas defined by the widest object.
+
+### Key Helper Functions
+*   `_group_by_rows` / `_group_by_cols`: These functions perform range clustering to identify 'bands' of objects. By calculating the row/column spans of objects and merging overlapping intervals, the code organizes the objects into the sequence they appear on the input grid.
+*   **BFS Logic**: The nested loop iterates through the interior grid to find connected components of non-8 values, treating them as individual entities.
+*   **Rotation & Centering**: The use of `np.rot90` adjusts the orientation of objects, while simple arithmetic (`(max_w - w) // 2`) handles the padding required for centering the blocks in the output grid.
+
+### Patterns Identified
+*   **Reading Order**: The placement of colors 1 and 2 on the borders serves as a coordinate system mapping. If blue is on the row, the layout follows a left-to-right (or right-to-left) progression; if on the column, it follows a top-to-bottom (or bottom-to-top) progression.
+*   **Spatial Context**: The task assumes that objects should be re-ordered based on their original grid position and transformed into a unified, centered vertical list.
