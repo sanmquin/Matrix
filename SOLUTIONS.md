@@ -25,3 +25,32 @@ Task 0934a4d8 involves an image where a specific rectangular region (marked by t
 - **Inference through Symmetry**: The solution relies on the property that the grid contains repeating patterns (rows or columns) that can be used to "fill in the blanks" for the occluded section.
 - **Constraint Satisfaction**: By excluding the occluded '8' cells from the candidate search, the code ensures it only learns patterns from valid, existing data.
 - **Output Construction**: A new grid of size `(oh, ow)` is generated, filling each cell with the best predicted value based on the row/column correlation scores.
+
+
+## Task 135a2760
+
+### Logic Overview
+The task 135a2760 involves repairing corrupted periodic patterns within a grid subdivided by a consistent border structure. The algorithm identifies the grid's 'framework' (border color and positions), isolates rectangular panels bounded by these borders, and reconstructs each panel by inferring the underlying repeating unit (tile) through majority voting.
+
+### Key Steps
+1. **Framework Identification:**
+   - Determines the `border_color` by counting the most frequent color forming lines that span more than 50% of the grid's height or width.
+   - Identifies `border_rows` and `border_cols`—the horizontal and vertical lines formed by the border color.
+
+2. **Panel Isolation:**
+   - Divides the grid into interior sub-grids (panels) using the detected borders.
+
+3. **Pattern Reconstruction (The Core Logic):**
+   - For each panel, the code searches for a pattern of size `(pr, pc)` (periodicity).
+   - It iterates through all possible period dimensions. To ensure robustness, it requires at least three samples for every cell within the tile (`min_reps >= 3`) to perform a valid statistical inference.
+   - **Majority Vote:** For every pixel position `(tr, tc)` in the potential `(pr, pc)` tile, it collects values from all corresponding positions across the panel using the formula `(tr + n*pr, tc + m*pc)`.
+   - It calculates an `error` score representing the number of pixels that deviate from the most common color in each tile position.
+
+4. **Correction:**
+   - The algorithm selects the tile pattern `(pr, pc)` that minimizes the total number of errors in the panel.
+   - It then reconstructs the entire panel by tiling this optimal pattern, effectively overwriting any corrupted pixels with the majority-voted value.
+
+### Summary of Transformations
+- **Detection:** Converts the grid into a structured coordinate system based on the border lines.
+- **Statistical Inference:** Uses the frequency of values in periodic offsets to filter out noise or corruption.
+- **Restoration:** Replaces the panel content with a perfectly tiled version of the best-fit repeating pattern.
