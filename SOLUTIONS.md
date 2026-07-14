@@ -309,3 +309,28 @@ This puzzle involves identifying colored regions in a grid and "flow" operations
 *   `_detect_t_arrows`: Identifies the direction, location, and potential color payload of all arrow markers.
 *   `_clean_grid`: A recovery heuristic that fills in "holes" left by markers using spatial consensus (the most common neighbor color).
 *   `_solve_square`: A specialized function for uniform square grids that avoids block-alignment issues by operating directly on individual pixels.
+
+
+## Task 221dfab4
+
+### Strategy Overview
+The task involves identifying a 'marker' (a small set of colored pixels) on the edge of the grid that initiates a 'beam' traveling across the grid. This beam follows a periodic 6-step pattern. When the beam hits a specific phase (index 4 in the 0-5 cycle), it interacts with existing shapes in the grid by recoloring them to green (3).
+
+### Core Logic
+1. **Identify Background and Colors**: The solution first identifies the background color (most frequent) and distinguishes between the 'marker color' (least frequent among non-background cells) and the 'shape color' (most frequent among non-background cells).
+2. **Determine Beam Direction**: By grouping the marker coordinates, the code determines if the marker lies on a row (horizontal marker causing a vertical beam) or a column (vertical marker causing a horizontal beam).
+3. **Beam Propagation**: The beam travels across the grid starting from the marker's edge. It moves cell by cell in the determined direction, tracking a `phase` using `d % 6`.
+4. **Pattern Application**:
+   - **Phase 0 & 2**: The beam line is painted with the `marker_color`.
+   - **Phase 4**: The beam line is painted green (`3`).
+   - **Interaction**: At `phase == 4`, the logic checks if any 'shape' pixels lie on the current beam row/column. If they do, those shape pixels are also turned green (`3`).
+   - **Other Phases**: The beam line is reset/painted with the background color.
+
+### Key Functions/Variables
+- `bg`: Most frequent color in the grid.
+- `marker_cells` & `shape_set`: Categorizes grid pixels into the triggering mechanism and the targets to be modified.
+- `phase`: A modulo-6 counter that dictates the beam's visual state as it propagates.
+- `step`: Determines the direction (+1 or -1) the beam moves based on whether the marker is on the lower or upper half of the grid.
+
+### Rule Summary
+The beam acts as a scanner. The repetition pattern (Marker-BG-Marker-BG-Green-BG) means every 6th step is a 'Green' event that transforms any object segment it overlaps into a green segment.
