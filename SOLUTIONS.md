@@ -334,3 +334,24 @@ The task involves identifying a 'marker' (a small set of colored pixels) on the 
 
 ### Rule Summary
 The beam acts as a scanner. The repetition pattern (Marker-BG-Marker-BG-Green-BG) means every 6th step is a 'Green' event that transforms any object segment it overlaps into a green segment.
+
+
+## Task 247ef758
+
+### Strategy Summary
+The task 247ef758 involves transforming an input grid that contains 'shapes' on the left side and 'marker' coordinates defined by the borders on the right side. The goal is to clear the original shapes and reproduce them at the grid intersections defined by the rows marked on the left border and the columns marked on the top border, matching the shape's color to the corresponding border marker.
+
+### Core Logic and Steps
+1. **Identify Grid Sections**: The code identifies a vertical divider (a column of identical, non-zero values) which splits the grid into the 'source' area (left) and the 'target' area (right).
+2. **Extract Markers**: It scans the left and top borders of the target area. Any value differing from the most common border color is treated as a marker, mapping a specific color to a set of row indices (`left_markers`) or column indices (`top_markers`).
+3. **Extract Shapes**: It identifies distinct colored shapes in the left area, grouping pixels by their color.
+4. **Shape Normalization**: For each shape found, the code calculates its geometric center. It converts the absolute coordinates of the pixels into relative coordinates (`pixel_row - center_row`, `pixel_col - center_col`) to allow the shape to be moved while maintaining its relative structure.
+5. **Placement**: For every color that has markers on both the left and top borders, the code:
+   - Erases the original shape from the left area.
+   - Iterates through all intersections (`marker_row`, `marker_col`).
+   - Projects the normalized shape pixels onto the grid centered at each intersection, ensuring the new shape is placed correctly within the target bounds.
+
+### Key Patterns and Transformations
+- **Intersection Logic**: The logic assumes that if a specific color exists in both border sets, it serves as a coordinate signal. The intersection of the row defined by the left border and the column defined by the top border acts as the anchor point (center) for the shape.
+- **Overwriting**: The shapes are processed in a specific order (sorted by their original vertical position) to ensure that when shapes overlap in the target area, the intended visibility is maintained.
+- **Geometric Centering**: By calculating the bounding box and shifting coordinates to a relative system, the code ensures that shapes are perfectly reconstructed regardless of their original position or size.
