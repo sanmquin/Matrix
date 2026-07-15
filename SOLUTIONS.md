@@ -480,3 +480,33 @@ The task involves identifying pairs of 4x4 rectangular structures within a large
 - **Iteration**: The code traverses the input grid using a sliding window of 4x4 pixels.
 - **Filtering**: By explicitly checking for `border_ok` (for frames) and `all == color` (for solids), the code effectively ignores background noise or partial shapes.
 - **Mapping**: The output format standardizes the relationship between the 'frame' and 'solid' types found in the messy input grid, essentially organizing the extracted components into a clean side-by-side array.
+
+
+## Task 2c181942
+
+### Strategy Overview
+The goal of task 2c181942 is to identify a central cross pattern made of four distinct colored arms and to 'extend' each arm by attaching an external shape of the same color, effectively mapping specific color-coded pieces onto the corresponding sides of the cross.
+
+### Key Logic and Steps
+1. **Pattern Detection:** 
+   - The algorithm searches for a 4x4 subgrid representing the 'hub' of a cross. 
+   - It identifies the background color (8) and ensures the four arms (top, bottom, left, right) have distinct non-background colors.
+   - It defines the center and captures the colors and coordinates of these arms.
+
+2. **Shape Extraction:**
+   - It scans the rest of the grid for non-background cells that are not part of the central cross.
+   - These cells are grouped by color into individual `color_cells` lists, representing the shapes waiting to be attached.
+
+3. **Alignment and Rotation:**
+   - For each color arm, the solver treats the color-coded shape as a bounding box.
+   - It attempts all 4 rotations (90-degree increments) for each shape.
+   - It checks if a specific side of the rotated shape matches the interface dimension and 'flatness' required to attach to the corresponding arm of the cross hub.
+
+4. **Transformation:**
+   - Once the best-fitting rotation is determined, the shape is placed adjacent to the corresponding side of the hub. 
+   - The new grid (`out`) is initialized with the background color, the central cross is preserved, and the newly oriented shapes are added according to their calculated alignment offsets.
+
+### Patterns and Rules
+- **Color Mapping:** Each arm color acts as a unique identifier for a specific piece scattered elsewhere in the grid.
+- **Geometric Matching:** The interface of the piece must align with the flat edge of the hub arm. The solution assumes that if a shape is a perfect match for that arm's orientation, it will be added to the output. 
+- **Spatial Placement:** Shapes are placed precisely adjacent to their respective arms, maintaining the spatial logic established by the hub's orientation.
