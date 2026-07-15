@@ -854,3 +854,23 @@ The task 4c416de3 involves identifying a 'template' shape (a connected set of no
 ### Patterns and Transformations
 *   **Transformations**: The code utilizes four basic transformations: original, horizontal flip, vertical flip, and 180-degree rotation.
 *   **0-Border Crossing**: The solution specifically checks if the expansion crosses the 0-border, which is a structural requirement for these puzzle templates, ensuring the template is placed symmetrically relative to the available space.
+
+
+## Task 4c7dc4dd
+
+### Logic Overview
+The task 4c7dc4dd involves identifying structured rectangular regions within a grid, often defined by specific border patterns or connected areas of zeros, and transforming these into new, deterministic patterns based on the unique non-zero values found inside those regions.
+
+### Core Strategy
+1.  **Region Detection**: The code utilizes helper functions like `find_zero_rectangles` and `find_zero_bounding_rect` to scan the input grid. It uses a Breadth-First Search (BFS) approach to identify contiguous blocks of zeros (or bounded regions) and calculates their bounding coordinates.
+2.  **Pattern Identification**: Once the largest rectangular region is isolated, the code identifies the set of unique integers present in that rectangle. 
+3.  **Transformation Logic**: The function `transform_rectangle_content` serves as a mapping layer. Depending on the set of unique values discovered in the input, it applies specific hard-coded transformation rules (Patterns 1 through 4) to generate the output grid:
+    *   **Pattern 1 (6, 2, 1)**: Constructs a specific layout with 6 in the top-left and 2s along the borders.
+    *   **Pattern 2 (2, 4)**: Maps specific inputs to a fixed 4x4 matrix layout.
+    *   **Pattern 3 (Checkerboard)**: Generates a checkerboard pattern alternating between 2 and 4, with specific interior cells cleared to 0.
+    *   **Pattern 4 (Border Pattern)**: Creates a border-focused structure using 8s on specific edges and 6s in the interior.
+
+### Key Functions
+*   `find_zero_bounding_rect`: Uses BFS to explore zero-value cells and determines the rectangular bounds `(min_r, min_c, max_r, max_c)` encompassing that area.
+*   `solve`: Orchestrates the flow by finding the largest rectangle, extracting the interior contents, and passing them to the transformation engine.
+*   `transform_rectangle_content`: Encapsulates the core rule-based logic that dictates the final arrangement of colors in the output grid based on the extracted features.
