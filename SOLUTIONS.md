@@ -536,3 +536,23 @@ The goal of task 2d0172a1 is to reconstruct a symmetrical, ring-based geometric 
     *   The code identifies a `peak_row` and `peak_col` corresponding to the center of the geometric feature.
     *   It reconstructs the grid by comparing the smoothed row and column profiles. A pixel at `(r, c)` is colored foreground if the `min` of the current row and column's ring profiles indicates it belongs to a "foreground" layer (i.e., odd-numbered ring values).
     *   Special handling is provided for peak rows/columns to maintain the integrity of the center lines.
+
+
+## Task 31f7f899
+
+### Strategy Overview
+The task involves identifying vertical colored bars that intersect a horizontal purple (color 6) line. The transformation requires reordering these bars based on their vertical length (extent) such that the total length of the bars increases from left to right across the grid. The azure (color 8) background is treated as empty space.
+
+### Key Steps of the Solution
+1. **Locate the Axis:** The algorithm identifies the 'center row'—the row containing the most purple cells. This serves as the anchor point for all vertical lines.
+2. **Identify Vertical Lines:** For each column, the algorithm checks for a color other than purple or background. It calculates the vertical extent above and below the center row to determine the total length of each line segment.
+3. **Extraction & Sorting:**
+   - Each line is stored as a tuple containing its original column index, color, and its 'above' and 'below' extents.
+   - The list of extents (pairs of above/below lengths) is extracted and sorted in ascending order based on the sum of the lengths (total size).
+4. **Grid Reconstruction:**
+   - A new grid is initialized with the background color (8) and the central purple line.
+   - The algorithm iterates through the original column positions and assigns the sorted extent pairs to the columns in their original sequence, effectively 'reordering' the lengths while keeping the colors in their original horizontal slots.
+
+### Patterns & Transformations
+- **Spatial Invariance:** The horizontal position of each colored bar remains constant; only the vertical extents are permuted.
+- **Sorting Criterion:** The complexity of the puzzle lies in recognizing that the relative vertical dimensions of the lines are 'shuffled' or 'sorted' to form a specific progression (e.g., shortest to longest) across the grid.
