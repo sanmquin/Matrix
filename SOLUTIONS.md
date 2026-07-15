@@ -609,3 +609,24 @@ The task requires reconstructing geometric shapes (polygons or paths) defined by
 *   **Connectivity**: A 'line' exists between two cells if they are on the same row, column, or diagonal.
 *   **Geometric Priority**: Closed shapes (cycles) are prioritized over simple paths to correctly draw complex boundaries.
 *   **Dependency**: Companion colors are dependent on the final placement of the primary color shapes; thus, primary shape reconstruction must finish before the companion shadows are rendered.
+
+
+## Task 36a08778
+
+### Strategy Overview
+Task 36a08778 involves extending vertical "purple" lines (color 6) downward from their starting positions until they encounter "red" barriers (color 2). When a line hits a red barrier, it acts like a light beam hitting an obstacle: it creates a horizontal connection (a bracket) along the top of the barrier and then reflects or splits to the sides of that barrier, continuing its downward path from the new positions.
+
+### Core Logic
+1. **Initialization**: Identify all initial purple cells (color 6) and note their column indices. These act as the starting 'active' columns.
+2. **Barrier Detection**: Map all contiguous segments of red cells (color 2) row by row. These define the horizontal obstacles that trigger the redirection of the purple lines.
+3. **Propagation (The Loop)**:
+   - Iterate row-by-row starting from the purple markers.
+   - **Filling**: For every active column, if the cell is not blocked by a red bar, paint it purple.
+   - **Collision & Redirection**: If a red bar exists in the next row, determine which active columns will strike the bar (those with indices between the bar's start and end).
+   - **Bracket Creation**: Upon collision, draw a horizontal bracket across the top of the bar (including the edges) to color it purple.
+   - **State Update**: Remove the columns that hit the center of the bar from the active set and add the columns corresponding to the left and right edges of the bar, effectively moving the 'flow' to the outside of the obstacles.
+
+### Key Transformations
+- **Vertical Extension**: The purple lines naturally move downward through empty space.
+- **Lateral Redirection**: The logic implements a specific rule where hitting a red segment causes the 'beam' to spread to the boundary of the red segment, changing the active column tracking from the interior of the bar to the outer edges.
+- **Persistence**: Once a column is added to the `extending` set, it continues to propagate downward through all subsequent rows unless it encounters another obstruction.
