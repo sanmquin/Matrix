@@ -585,3 +585,27 @@ Task 332f06d7 involves identifying a square block of black cells (0) and moving 
 ### Patterns Identified
 - The black square acts as a movable object that 'paints' its previous location with the background path color.
 - The grid's empty or path-like spaces define the bounds for movement, often restricted by the 'background' color which acts as an obstacle for the black square.
+
+
+## Task 35ab12c3
+
+### Strategy Overview
+The task requires reconstructing geometric shapes (polygons or paths) defined by sparse points of a specific color and then propagating 'companion' colors based on a fixed spatial offset relative to the primary shape. The solution treats the grid as a graph where vertices of the same color are connected if they form straight, diagonal, or orthogonal lines.
+
+### Key Steps
+
+1.  **Color Grouping**: The code first identifies all non-zero cells and groups them by their color. Colors represented by only one cell are flagged as potential 'companions'.
+
+2.  **Companion Mapping**: For single-cell colors, the script searches for an adjacent multi-cell color ('primary color'). It records the spatial offset (`dr`, `dc`) between the single cell and the neighboring primary color cell. This defines the 'shadow' relationship.
+
+3.  **Shape Reconstruction**:
+    *   **Graph Construction**: For each multi-cell color, it builds an adjacency list by checking if pairs of cells of that color lie on a straight line (orthogonal or diagonal).
+    *   **Path/Cycle Finding**: It determines the optimal order of vertices to connect the cells. It checks if the vertices can form a closed polygon (cycle) using angular sorting around a centroid or a Hamiltonian path using Depth-First Search (DFS).
+    *   **Drawing**: Once the order is determined, it draws lines between consecutive vertices, filling the grid with the primary color.
+
+4.  **Shadow Propagation**: Finally, the code iterates over the newly drawn primary shapes. For every cell belonging to a primary color, it looks for the defined 'companion' offset. If the calculated position in the grid is empty, it places the companion color there, effectively 'shadowing' the primary shape.
+
+### Core Rules
+*   **Connectivity**: A 'line' exists between two cells if they are on the same row, column, or diagonal.
+*   **Geometric Priority**: Closed shapes (cycles) are prioritized over simple paths to correctly draw complex boundaries.
+*   **Dependency**: Companion colors are dependent on the final placement of the primary color shapes; thus, primary shape reconstruction must finish before the companion shadows are rendered.
