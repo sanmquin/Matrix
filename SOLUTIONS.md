@@ -828,3 +828,29 @@ Task 4c3d4a41 involves transforming a grid divided into two sections by an empty
 - **Projective Mapping:** The structure defined by the left-side staircase is overlaid onto the right-side data columns.
 - **Data Sorting/Alignment:** Within each column, existing data is collected and 'squeezed' toward the bottom of the column's available space, while the projected staircase mask dictates where the grey 'filler' (5) is placed.
 - **Grid Reset:** The input grid's left side is emptied, effectively moving the 'logic' or 'transformation' from the left to represent the final state on the right.
+
+
+## Task 4c416de3
+
+### Strategy Overview
+The task 4c416de3 involves identifying a 'template' shape (a connected set of non-background, non-marker cells) and replicating it across a grid. The grid contains single-cell 'markers' that act as seeds. The goal is to place the template shape such that the marker occupies a specific relative position within that shape. The orientation of the placed template is determined by the marker's proximity to the boundaries (0-borders) of the sub-grids or rectangular areas.
+
+### Key Logic and Steps
+
+1.  **Component Identification**: 
+    The algorithm identifies the template shape (the multi-cell object) and the markers (single-cell objects) using BFS on the non-background, non-dominant colors.
+
+2.  **Template Geometry Analysis**:
+    *   **BBox Corners**: If the template has cells located at the corners of its bounding box, the algorithm uses a **tip-based anchor strategy**. The 'tip' is chosen as the most isolated corner cell.
+    *   **Elbow-based**: If the template lacks corner cells (e.g., Z-shapes), it uses an **elbow-based anchor strategy**, selecting the template cell with the most neighbors as the anchor point.
+
+3.  **Marker Orientation**: 
+    For each marker, the code calculates its position relative to the nearest 0-cell borders (up, down, left, right). This defines which 'quadrant' the marker sits in, which dictates how the template should be flipped or rotated to align correctly.
+
+4.  **Placement Strategies**:
+    *   **Tip Strategy**: The template is transformed (flipped/rotated) based on the quadrant logic to ensure the marker aligns with the intended 'tip' of the shape.
+    *   **Elbow Strategy**: The algorithm evaluates all valid rotations/reflections of the template. It calculates a 'direction alignment score' based on the center of the placed template relative to the marker. It chooses the orientation that maximizes this score while ensuring the placement is valid (does not overwrite other non-background/non-marker cells).
+
+### Patterns and Transformations
+*   **Transformations**: The code utilizes four basic transformations: original, horizontal flip, vertical flip, and 180-degree rotation.
+*   **0-Border Crossing**: The solution specifically checks if the expansion crosses the 0-border, which is a structural requirement for these puzzle templates, ensuring the template is placed symmetrically relative to the available space.
