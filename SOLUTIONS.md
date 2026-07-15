@@ -714,3 +714,25 @@ The task 3e6067c3 involves identifying rectangular containers (boxes) within a g
 ### Patterns & Transformations
 *   **Geometric Alignment**: The code strictly relies on the boxes sharing row or column indices to determine if a connection can be drawn.
 *   **Path Direction**: The path color is derived from the box at the *start* of the segment in the sequence, which is then extended into the empty space until the next box is reached.
+
+
+## Task 409aa875
+
+### Strategy Overview
+The goal of task 409aa875 is to identify small 3-cell geometric shapes (specifically triominoes) scattered across a background grid, determine their 'pointing' direction, and project a mark (dot) at a fixed distance from the center of each shape. If multiple projections overlap, they result in a collision marker; otherwise, they highlight the target location or the original shape itself.
+
+### Core Steps
+1. **Background Identification**: The code first calculates the most frequent pixel value in the grid to treat it as the background (`bg`). All non-background cells are grouped into connected components using 8-connectivity.
+
+2. **Component Analysis**: The script iterates through components containing exactly 3 cells. It calculates the bounding box and a normalized relative coordinate set for each triomino.
+
+3. **Determining Direction**: The code uses hardcoded pattern matching to identify the 'tip' of each triomino and its orientation:
+   - **L-Triominoes** (2x2 bounding boxes with one missing corner): The missing corner defines the orientation, pointing diagonally outward.
+   - **Line-like Triominoes** (2x3 or 3x2 bounding boxes): Specific configurations identify a central tip pointing vertically or horizontally.
+
+4. **Projection**: For each valid triomino, a 'dot' is projected 5 units away from the identified tip in the calculated direction (`dr`, `dc`).
+
+5. **Final Marking**:
+   - **Collisions**: If multiple triominoes project to the same cell, that cell is colored Blue (1).
+   - **Successful Projection**: If a single projection lands on the background, that spot is colored Maroon (9).
+   - **Existing Structure**: If a projection overlaps with an existing component, that component's cells are colored Maroon (9).
