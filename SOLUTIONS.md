@@ -776,3 +776,34 @@ The ARC task 45a5af55 involves transforming a vertical strip of color-coded band
 ### Patterns and Transformations
 - **Transformation Rule**: The input acts as a 'recipe' for a target square. If the input is $N$ vertical stripes, the output is a concentric square structure where the $i$-th stripe from the top of the input becomes the $i$-th outermost frame in the output.
 - **Geometry**: The outermost band corresponds to the outermost edges of the square, and the last (bottom-most) band in the input corresponds to the solid core at the center of the output.
+
+
+## Task 4a21e3da
+
+### Logic Summary
+The puzzle involves identifying a pattern/shape (of a non-background color) and 'pushing' or reflecting that shape toward the edges defined by red markers (color 2). The red markers act as anchors that determine both the boundary line and the direction in which the shape should be displaced within the grid.
+
+### Key Steps
+1. **Preprocessing:**
+   - Identify the background color (most frequent color).
+   - Locate all red dots (`2`) and categorize them by their grid edge position (top, bottom, left, right).
+   - Identify the primary non-background shape pixels.
+
+2. **Axis Detection:**
+   - The red dots establish vertical (`v_axis`) or horizontal (`h_axis`) lines of symmetry/action. 
+   - If a red dot is on the top or bottom edge, it defines a vertical axis. If on the left or right, a horizontal axis.
+
+3. **Coordinate Transformation:**
+   - The grid is divided into quadrants based on the identified axes.
+   - The logic shifts the existing shape pixels toward the boundary defined by the red dots. 
+   - `row_shift` and `col_shift` are calculated by determining the distance from the shape's current bounds to the grid's extreme edges (e.g., top row or bottom row).
+
+4. **Reconstruction:**
+   - **Axis Placement:** Any pixels lying exactly on the axis of the red dots are preserved in their original location.
+   - **Drawing Lines:** The code draws red lines (color 2) originating from the red dots, extending until they hit the shape pixels or the grid boundary, effectively connecting the markers to the shape.
+   - **Quadrant Projection:** The shape pixels are translated toward the respective edge specified by the red dot's orientation, effectively 'snapping' the shape to the boundaries of the grid.
+
+### Patterns and Transformations
+- **Symmetry/Anchoring:** The red dots serve as the 'anchors' for the transformation. If a dot is at the top, the shape is pushed to the top.
+- **Shift-Based Logic:** The algorithm uses the minimum/maximum row or column index of the shape pixels to calculate the required displacement to reach the target boundary.
+- **Constraint Satisfaction:** The code ensures that pixels overlapping with the axes remain fixed, while others are moved to fill the quadrant boundary.
