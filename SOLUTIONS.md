@@ -671,3 +671,24 @@ The ARC task 3a25b0d8 involves two distinct shapes within a grid that share a co
 - **Flood-fill (BFS)**: Used twice—once to group cells by shape connectivity, and again to isolate specific internal chambers versus external background areas.
 - **Normalized Centroids**: `(row_centroid / height, col_centroid / width)` is used to map spatial features between the filled shape and the outline shape, even if the shapes have different dimensions.
 - **Distance Mapping**: Uses a simple nearest-neighbor approach in the normalized coordinate space to determine which color from the source shape belongs in which cavity of the target outline.
+
+
+## Task 3dc255db
+
+### Strategy Overview
+The task involves identifying distinct objects (connected components) within a grid that contain both a 'shape' (majority color) and 'markers' (minority color). The goal is to move the markers from their current positions within the shape and project them outward as a 'beam' originating from the shape's most extreme point, pointing away from the shape's center.
+
+### Core Logic
+1. **Component Analysis**: The algorithm uses Breadth-First Search (BFS) to identify 8-connected components of non-background (non-zero) cells.
+2. **Role Classification**: For each component, it counts the occurrences of each color. The color with the highest frequency is identified as the **shape**, and the color with the lowest frequency is identified as the **marker**.
+3. **Centroid Calculation**: It calculates the centroid of the marker cells to determine the interior center of the object.
+4. **Tip Detection**: The algorithm evaluates four cardinal directions (UP, DOWN, LEFT, RIGHT). For each direction, it identifies a 'tip'—the cell within the shape that is most distant from the marker centroid. It also considers the width of the shape at the edge and the adjacent row to ensure the tip is correctly identified as an outermost point.
+5. **Beam Projection**: 
+   - The markers are cleared from their initial positions.
+   - A 'beam' of the marker color is drawn starting from the identified tip cell, extending outward in the chosen cardinal direction.
+   - The length of the beam is determined by the number of markers initially present, capped by the available empty space in the grid.
+
+### Key Transformations
+* **Object Identification**: Uses `collections.deque` and a `visited` matrix to group pixels into distinct objects.
+* **Heuristic Sorting**: The `tip_score` function sorts potential projection directions based on the shape's geometry, prioritizing the most 'pointed' extreme to ensure the beam projects correctly away from the core.
+* **Replacement**: The original marker cells are erased (set to 0), and a new line of the same length and color is constructed in an empty region of the grid.
