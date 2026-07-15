@@ -630,3 +630,24 @@ Task 36a08778 involves extending vertical "purple" lines (color 6) downward from
 - **Vertical Extension**: The purple lines naturally move downward through empty space.
 - **Lateral Redirection**: The logic implements a specific rule where hitting a red segment causes the 'beam' to spread to the boundary of the red segment, changing the active column tracking from the interior of the bar to the outer edges.
 - **Persistence**: Once a column is added to the `extending` set, it continues to propagate downward through all subsequent rows unless it encounters another obstruction.
+
+
+## Task 38007db0
+
+### Strategy Overview
+The task involves identifying a grid partitioned into smaller, uniform rectangular panels by divider lines (the `border_color`). Within each horizontal strip of panels, there is exactly one panel that contains a unique pattern compared to the others. The goal is to identify these 'odd-one-out' panels and stack them vertically to form the final output grid.
+
+### Core Logic
+1. **Segmentation**: The code first identifies the `border_color` from the corner of the input grid. It scans for rows and columns consisting entirely of this color to determine the grid segments (panels).
+2. **Extraction**: Using the identified border lines, the code defines boundaries for each panel. Two helper functions are used:
+   - `get_panel`: Extracts the full contents of the panel, including its internal border.
+   - `get_panel_interior`: Extracts only the content inside the panel, excluding the surrounding border lines.
+3. **Pattern Identification**: For each row of panels (a horizontal sequence of panels separated by vertical dividers), the code collects the 'interior' patterns and uses a `Counter` to determine which interior occurs only once. 
+4. **Reconstruction**: 
+   - The code selects the full panel (including its border) for every identified 'odd-one-out' panel.
+   - These selected panels are concatenated vertically.
+   - It performs a final cleanup to remove redundant border lines that occur where the selected panels join, ensuring the final output adheres to the expected grid structure.
+
+### Key Patterns and Transformations
+- **Odd-One-Out Rule**: This is the primary logic constraint. In every horizontal segment of the input, the puzzle implicitly asks to classify the variations and discard the repeats, keeping only the unique pattern.
+- **Border Handling**: The solution correctly recognizes that borders are metadata defining the structure and must be handled carefully when extracting and re-stacking components to avoid duplication of separator lines.
