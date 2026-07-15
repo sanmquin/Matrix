@@ -461,3 +461,22 @@ The task 2b83f449 involves transforming a grid characterized by alternating rows
 
 4.  **Boundary Suppression**: 
     - To resolve conflicts where two segments meet at a `0` cell, the algorithm evaluates the proximity of 'A'-anchors. If a boundary exists between two segments that both contain anchors from the row above, it intelligently suppresses one of the anchors (setting it to `8`) based on distance, ensuring the output structure remains consistent with the observed pattern rules.
+
+
+## Task 2ba387bc
+
+### Overview
+The task involves identifying pairs of 4x4 rectangular structures within a larger grid and rearranging them into a new output grid. The objects are classified into two categories: **solid blocks** (all cells are the same color) and **frames** (a hollow 4x4 square with a border of one color and an empty 2x2 center). The solution extracts these objects, pairs them by their appearance order, and arranges them into a consolidated 4x8-width output grid.
+
+### Core Logic and Strategy
+1. **Object Detection**: The algorithm scans the input grid to find 4x4 blocks. It uses a `visited` mask to ensure each block is only processed once.
+2. **Classification**: 
+   - A **solid block** is identified if every cell within the 4x4 area matches the color of the top-left corner.
+   - A **frame** is identified if the outermost 12 cells form a border of the same color, while the inner 2x2 square consists of 0s (background).
+3. **Sorting**: Detected objects are collected into lists and sorted by their row and column coordinates (top-to-bottom, left-to-right).
+4. **Reconstruction**: The algorithm creates a new grid with a height of `4 * number_of_pairs` and a width of 8. It then places the `i-th` frame in the left 4x4 quadrant and the `i-th` solid block in the right 4x4 quadrant of the corresponding row segment.
+
+### Key Steps
+- **Iteration**: The code traverses the input grid using a sliding window of 4x4 pixels.
+- **Filtering**: By explicitly checking for `border_ok` (for frames) and `all == color` (for solids), the code effectively ignores background noise or partial shapes.
+- **Mapping**: The output format standardizes the relationship between the 'frame' and 'solid' types found in the messy input grid, essentially organizing the extracted components into a clean side-by-side array.
