@@ -651,3 +651,23 @@ The task involves identifying a grid partitioned into smaller, uniform rectangul
 ### Key Patterns and Transformations
 - **Odd-One-Out Rule**: This is the primary logic constraint. In every horizontal segment of the input, the puzzle implicitly asks to classify the variations and discard the repeats, keeping only the unique pattern.
 - **Border Handling**: The solution correctly recognizes that borders are metadata defining the structure and must be handled carefully when extracting and re-stacking components to avoid duplication of separator lines.
+
+
+## Task 3a25b0d8
+
+### Logic Overview
+The ARC task 3a25b0d8 involves two distinct shapes within a grid that share a common 'border' color. One shape is 'filled' (containing regions of varying colors), and the other is an 'outline' (containing empty background interior chambers). The goal is to transfer the interior colors from the filled shape to the corresponding chambers in the outline shape based on their spatial position.
+
+### Core Strategy
+1. **Identify Components**: The solver determines the background and border colors using frequency counting. It then separates the grid into two distinct shapes—a 'filled' shape and an 'outline' shape—using BFS to identify connected components of non-background cells.
+2. **Isolate Regions**: 
+   - For the **filled shape**, it extracts contiguous, same-colored internal regions.
+   - For the **outline shape**, it identifies empty 'chambers' (background cells completely enclosed by the border).
+3. **Coordinate Matching**: The solver calculates the **normalized centroid** for each colored region in the filled shape and each empty chamber in the outline shape. Normalization ensures that shapes of different sizes or aspect ratios can be mapped to one another consistently.
+4. **Color Transfer**: For every chamber in the outline shape, the solver finds the closest colored region from the filled shape by minimizing the Euclidean distance between their normalized centroids. The chamber is then filled with the corresponding color from the matched region.
+
+### Key Helpers & Steps
+- **`bbox` function**: Calculates the rectangular bounding box for a set of coordinates to isolate the two shapes into subgrids.
+- **Flood-fill (BFS)**: Used twice—once to group cells by shape connectivity, and again to isolate specific internal chambers versus external background areas.
+- **Normalized Centroids**: `(row_centroid / height, col_centroid / width)` is used to map spatial features between the filled shape and the outline shape, even if the shapes have different dimensions.
+- **Distance Mapping**: Uses a simple nearest-neighbor approach in the normalized coordinate space to determine which color from the source shape belongs in which cavity of the target outline.
