@@ -671,3 +671,235 @@ The ARC task 3a25b0d8 involves two distinct shapes within a grid that share a co
 - **Flood-fill (BFS)**: Used twice—once to group cells by shape connectivity, and again to isolate specific internal chambers versus external background areas.
 - **Normalized Centroids**: `(row_centroid / height, col_centroid / width)` is used to map spatial features between the filled shape and the outline shape, even if the shapes have different dimensions.
 - **Distance Mapping**: Uses a simple nearest-neighbor approach in the normalized coordinate space to determine which color from the source shape belongs in which cavity of the target outline.
+
+
+## Task 3dc255db
+
+### Strategy Overview
+The task involves identifying distinct objects (connected components) within a grid that contain both a 'shape' (majority color) and 'markers' (minority color). The goal is to move the markers from their current positions within the shape and project them outward as a 'beam' originating from the shape's most extreme point, pointing away from the shape's center.
+
+### Core Logic
+1. **Component Analysis**: The algorithm uses Breadth-First Search (BFS) to identify 8-connected components of non-background (non-zero) cells.
+2. **Role Classification**: For each component, it counts the occurrences of each color. The color with the highest frequency is identified as the **shape**, and the color with the lowest frequency is identified as the **marker**.
+3. **Centroid Calculation**: It calculates the centroid of the marker cells to determine the interior center of the object.
+4. **Tip Detection**: The algorithm evaluates four cardinal directions (UP, DOWN, LEFT, RIGHT). For each direction, it identifies a 'tip'—the cell within the shape that is most distant from the marker centroid. It also considers the width of the shape at the edge and the adjacent row to ensure the tip is correctly identified as an outermost point.
+5. **Beam Projection**: 
+   - The markers are cleared from their initial positions.
+   - A 'beam' of the marker color is drawn starting from the identified tip cell, extending outward in the chosen cardinal direction.
+   - The length of the beam is determined by the number of markers initially present, capped by the available empty space in the grid.
+
+### Key Transformations
+* **Object Identification**: Uses `collections.deque` and a `visited` matrix to group pixels into distinct objects.
+* **Heuristic Sorting**: The `tip_score` function sorts potential projection directions based on the shape's geometry, prioritizing the most 'pointed' extreme to ensure the beam projects correctly away from the core.
+* **Replacement**: The original marker cells are erased (set to 0), and a new line of the same length and color is constructed in an empty region of the grid.
+
+
+## Task 3e6067c3
+
+### Strategy Overview
+The task 3e6067c3 involves identifying rectangular containers (boxes) within a grid, determining a sequence of colors from a provided 'key' row, and drawing paths between these boxes to connect them according to that sequence.
+
+### Core Logic
+1. **Identify Components**: The code uses BFS to identify connected components of the 'border' color (the second most frequent color). These components form the rectangular boundaries of the boxes.
+2. **Extract Box Metadata**: For each detected border, the code calculates the bounding box coordinates (`min_r`, `max_r`, `min_c`, `max_c`) and identifies the `center_color` enclosed within the box.
+3. **Parse the Key Sequence**: It scans the grid (starting from the bottom row) to find a row containing color markers. This sequence dictates the order in which boxes of those colors must be connected.
+4. **Pathfinding**: Starting with the first color in the key sequence, the algorithm searches for an 'aligned' box (one that shares the same row or column range and has a clear path of background color between them). It iteratively builds a sequence of boxes.
+5. **Drawing**: Once the chain of boxes is established, it fills the gaps between consecutive boxes in the chain using the `color` of the originating box.
+
+### Key Functions
+*   `solve`: Orchestrates the detection, sequencing, and drawing phases.
+*   `find_aligned`: A helper that checks if two boxes are aligned (sharing either horizontal or vertical boundaries) and ensures no obstacles exist between them, confirming a valid connection is possible.
+*   `gap_is_clear`: Validates that the space between two boxes consists only of the background color (`bg`), ensuring valid path placement.
+
+### Patterns & Transformations
+*   **Geometric Alignment**: The code strictly relies on the boxes sharing row or column indices to determine if a connection can be drawn.
+*   **Path Direction**: The path color is derived from the box at the *start* of the segment in the sequence, which is then extended into the empty space until the next box is reached.
+
+
+## Task 409aa875
+
+### Strategy Overview
+The goal of task 409aa875 is to identify small 3-cell geometric shapes (specifically triominoes) scattered across a background grid, determine their 'pointing' direction, and project a mark (dot) at a fixed distance from the center of each shape. If multiple projections overlap, they result in a collision marker; otherwise, they highlight the target location or the original shape itself.
+
+### Core Steps
+1. **Background Identification**: The code first calculates the most frequent pixel value in the grid to treat it as the background (`bg`). All non-background cells are grouped into connected components using 8-connectivity.
+
+2. **Component Analysis**: The script iterates through components containing exactly 3 cells. It calculates the bounding box and a normalized relative coordinate set for each triomino.
+
+3. **Determining Direction**: The code uses hardcoded pattern matching to identify the 'tip' of each triomino and its orientation:
+   - **L-Triominoes** (2x2 bounding boxes with one missing corner): The missing corner defines the orientation, pointing diagonally outward.
+   - **Line-like Triominoes** (2x3 or 3x2 bounding boxes): Specific configurations identify a central tip pointing vertically or horizontally.
+
+4. **Projection**: For each valid triomino, a 'dot' is projected 5 units away from the identified tip in the calculated direction (`dr`, `dc`).
+
+5. **Final Marking**:
+   - **Collisions**: If multiple triominoes project to the same cell, that cell is colored Blue (1).
+   - **Successful Projection**: If a single projection lands on the background, that spot is colored Maroon (9).
+   - **Existing Structure**: If a projection overlaps with an existing component, that component's cells are colored Maroon (9).
+
+
+## Task 446ef5d2
+
+### Strategy Overview
+The task 446ef5d2 involves identifying distinct non-background components within a grid, extracting their geometric shapes, and rearranging them into a compact, rectangular block surrounded by a border color. The core of the solution is a **Backtracking Tiling Algorithm** that attempts to fit the extracted shapes into various grid dimensions until they form a perfect rectangle with a consistent colored border.
+
+### Key Steps of the Solution
+1. **Component Detection**: 
+   - The algorithm identifies the background color (most frequent). It then uses BFS (Breadth-First Search) to group non-background pixels into distinct components, including 8-connectivity (diagonal neighbors are included).
+   - It identifies a "tag" component based on color frequency within the component; this tag is used to infer the relative positioning (e.g., top-left, bottom-right) of the final assembly within the original grid.
+
+2. **Shape Extraction**:
+   - It calculates the relative coordinates of each non-background shape (normalizing by the top-left-most pixel). The component designated as the "tag" is ignored during the actual tiling but determines the final placement in the canvas.
+
+3. **Tiling & Assembly**:
+   - **Grid Dimension Search**: The algorithm calculates possible dimensions `(oh, ow)` that accommodate the total number of non-background cells.
+   - **Backtracking (`try_tile` function)**: It attempts to place the extracted shapes into an `oh x ow` grid. It recursively tries placing every unused shape at every available grid position. 
+   - **Border Validation**: After successfully filling the grid, it checks if all perimeter pixels match a consistent `border_color` identified earlier. If a valid configuration is found, the recursion terminates.
+
+4. **Final Placement**:
+   - The resulting tiled block is centered or offset within the original grid dimensions based on the "tag" direction detected during the analysis phase. If no specific tag direction is inferred, it defaults to centering the block.
+
+
+## Task 45a5af55
+
+### Logic Summary
+The ARC task 45a5af55 involves transforming a vertical strip of color-coded bands into a nested square frame structure. The input is a 1D vertical column where contiguous blocks of the same color represent the colors of concentric squares. The solution reconstructs the output grid by creating a square canvas and filling it with colored frames from the outside in.
+
+### Key Steps
+1. **Parsing Bands**: The input grid (a single column) is scanned to identify contiguous color segments. Each segment is stored as a tuple `(color, thickness)`, where 'thickness' is the number of rows that color occupies in the input column.
+2. **Determining Canvas Size**: The total size of the final square grid is calculated. Since each band represents a square frame, the side length is derived from the total height of the input (`sum(thicknesses)`) doubled, minus the thickness of the final (innermost) band to ensure it fits perfectly as a solid square in the center.
+3. **Frame Construction**: The algorithm initializes an empty square grid. It iterates through the identified bands, filling concentric frames of the specified `color` and `thickness`. 
+   - For each band, the algorithm calculates the current `offset` (the distance from the outer edge).
+   - It iterates through the sub-grid defined by `side - 2 * offset`.
+   - If a cell coordinate falls within the boundary defined by `thickness`, it is assigned the current `color`.
+
+### Patterns and Transformations
+- **Transformation Rule**: The input acts as a 'recipe' for a target square. If the input is $N$ vertical stripes, the output is a concentric square structure where the $i$-th stripe from the top of the input becomes the $i$-th outermost frame in the output.
+- **Geometry**: The outermost band corresponds to the outermost edges of the square, and the last (bottom-most) band in the input corresponds to the solid core at the center of the output.
+
+
+## Task 4a21e3da
+
+### Logic Summary
+The puzzle involves identifying a pattern/shape (of a non-background color) and 'pushing' or reflecting that shape toward the edges defined by red markers (color 2). The red markers act as anchors that determine both the boundary line and the direction in which the shape should be displaced within the grid.
+
+### Key Steps
+1. **Preprocessing:**
+   - Identify the background color (most frequent color).
+   - Locate all red dots (`2`) and categorize them by their grid edge position (top, bottom, left, right).
+   - Identify the primary non-background shape pixels.
+
+2. **Axis Detection:**
+   - The red dots establish vertical (`v_axis`) or horizontal (`h_axis`) lines of symmetry/action. 
+   - If a red dot is on the top or bottom edge, it defines a vertical axis. If on the left or right, a horizontal axis.
+
+3. **Coordinate Transformation:**
+   - The grid is divided into quadrants based on the identified axes.
+   - The logic shifts the existing shape pixels toward the boundary defined by the red dots. 
+   - `row_shift` and `col_shift` are calculated by determining the distance from the shape's current bounds to the grid's extreme edges (e.g., top row or bottom row).
+
+4. **Reconstruction:**
+   - **Axis Placement:** Any pixels lying exactly on the axis of the red dots are preserved in their original location.
+   - **Drawing Lines:** The code draws red lines (color 2) originating from the red dots, extending until they hit the shape pixels or the grid boundary, effectively connecting the markers to the shape.
+   - **Quadrant Projection:** The shape pixels are translated toward the respective edge specified by the red dot's orientation, effectively 'snapping' the shape to the boundaries of the grid.
+
+### Patterns and Transformations
+- **Symmetry/Anchoring:** The red dots serve as the 'anchors' for the transformation. If a dot is at the top, the shape is pushed to the top.
+- **Shift-Based Logic:** The algorithm uses the minimum/maximum row or column index of the shape pixels to calculate the required displacement to reach the target boundary.
+- **Constraint Satisfaction:** The code ensures that pixels overlapping with the axes remain fixed, while others are moved to fill the quadrant boundary.
+
+
+## Task 4c3d4a41
+
+### Strategy Overview
+Task 4c3d4a41 involves transforming a grid divided into two sections by an empty (all-0) column. The left section contains a 'staircase' pattern (composed of color 5), and the right section contains columns of colored data. The goal is to 'push' or 'project' the staircase structure from the left side onto the right side and use it as a mask to reorganize the data in the right section.
+
+### Core Logic and Steps
+1. **Identify Sections:** The code searches for a column consisting entirely of zeros to act as a separator between the left and right halves.
+2. **Staircase Mapping:** It maps the coordinates of color 5 (the staircase) from the left side to the right side. It calculates an `offset` by comparing the column positions of the data columns on the left versus the right.
+3. **Data Extraction:** In the right section, it identifies 'data columns' (columns containing non-0, non-5 values). For each of these columns, it extracts the original color values that reside between the top of the frame and the bottom-most point of the staircase.
+4. **Reorganization:** 
+   - For each data column, the code calculates the 'active area' (rows from the frame top to the staircase base).
+   - It identifies which rows in this area are occupied by the 'staircase' (from the projected mapping) and which are free.
+   - It fills the free rows with the extracted color data, aligning them to the bottom of the active section, and fills the remaining upper rows in that area (as well as the staircase-occupied rows) with color 5 (grey/white).
+5. **Cleanup:** The left side of the output grid is cleared (set to 0), and the right side is updated with the new organized data and the projected staircase mask.
+
+### Summary of Transformations
+- **Projective Mapping:** The structure defined by the left-side staircase is overlaid onto the right-side data columns.
+- **Data Sorting/Alignment:** Within each column, existing data is collected and 'squeezed' toward the bottom of the column's available space, while the projected staircase mask dictates where the grey 'filler' (5) is placed.
+- **Grid Reset:** The input grid's left side is emptied, effectively moving the 'logic' or 'transformation' from the left to represent the final state on the right.
+
+
+## Task 4c416de3
+
+### Strategy Overview
+The task 4c416de3 involves identifying a 'template' shape (a connected set of non-background, non-marker cells) and replicating it across a grid. The grid contains single-cell 'markers' that act as seeds. The goal is to place the template shape such that the marker occupies a specific relative position within that shape. The orientation of the placed template is determined by the marker's proximity to the boundaries (0-borders) of the sub-grids or rectangular areas.
+
+### Key Logic and Steps
+
+1.  **Component Identification**: 
+    The algorithm identifies the template shape (the multi-cell object) and the markers (single-cell objects) using BFS on the non-background, non-dominant colors.
+
+2.  **Template Geometry Analysis**:
+    *   **BBox Corners**: If the template has cells located at the corners of its bounding box, the algorithm uses a **tip-based anchor strategy**. The 'tip' is chosen as the most isolated corner cell.
+    *   **Elbow-based**: If the template lacks corner cells (e.g., Z-shapes), it uses an **elbow-based anchor strategy**, selecting the template cell with the most neighbors as the anchor point.
+
+3.  **Marker Orientation**: 
+    For each marker, the code calculates its position relative to the nearest 0-cell borders (up, down, left, right). This defines which 'quadrant' the marker sits in, which dictates how the template should be flipped or rotated to align correctly.
+
+4.  **Placement Strategies**:
+    *   **Tip Strategy**: The template is transformed (flipped/rotated) based on the quadrant logic to ensure the marker aligns with the intended 'tip' of the shape.
+    *   **Elbow Strategy**: The algorithm evaluates all valid rotations/reflections of the template. It calculates a 'direction alignment score' based on the center of the placed template relative to the marker. It chooses the orientation that maximizes this score while ensuring the placement is valid (does not overwrite other non-background/non-marker cells).
+
+### Patterns and Transformations
+*   **Transformations**: The code utilizes four basic transformations: original, horizontal flip, vertical flip, and 180-degree rotation.
+*   **0-Border Crossing**: The solution specifically checks if the expansion crosses the 0-border, which is a structural requirement for these puzzle templates, ensuring the template is placed symmetrically relative to the available space.
+
+
+## Task 4c7dc4dd
+
+### Logic Overview
+The task 4c7dc4dd involves identifying structured rectangular regions within a grid, often defined by specific border patterns or connected areas of zeros, and transforming these into new, deterministic patterns based on the unique non-zero values found inside those regions.
+
+### Core Strategy
+1.  **Region Detection**: The code utilizes helper functions like `find_zero_rectangles` and `find_zero_bounding_rect` to scan the input grid. It uses a Breadth-First Search (BFS) approach to identify contiguous blocks of zeros (or bounded regions) and calculates their bounding coordinates.
+2.  **Pattern Identification**: Once the largest rectangular region is isolated, the code identifies the set of unique integers present in that rectangle. 
+3.  **Transformation Logic**: The function `transform_rectangle_content` serves as a mapping layer. Depending on the set of unique values discovered in the input, it applies specific hard-coded transformation rules (Patterns 1 through 4) to generate the output grid:
+    *   **Pattern 1 (6, 2, 1)**: Constructs a specific layout with 6 in the top-left and 2s along the borders.
+    *   **Pattern 2 (2, 4)**: Maps specific inputs to a fixed 4x4 matrix layout.
+    *   **Pattern 3 (Checkerboard)**: Generates a checkerboard pattern alternating between 2 and 4, with specific interior cells cleared to 0.
+    *   **Pattern 4 (Border Pattern)**: Creates a border-focused structure using 8s on specific edges and 6s in the interior.
+
+### Key Functions
+*   `find_zero_bounding_rect`: Uses BFS to explore zero-value cells and determines the rectangular bounds `(min_r, min_c, max_r, max_c)` encompassing that area.
+*   `solve`: Orchestrates the flow by finding the largest rectangle, extracting the interior contents, and passing them to the transformation engine.
+*   `transform_rectangle_content`: Encapsulates the core rule-based logic that dictates the final arrangement of colors in the output grid based on the extracted features.
+
+
+## Task 4e34c42c
+
+### Strategy Overview
+The goal of task 4e34c42c is to reconstruct a coherent 'object' or pattern by identifying and merging overlapping components found in the input grid. The algorithm treats the input as a collection of sub-patterns (connected components of non-background colors) and attempts to assemble them into a single, unified structure by aligning overlapping sections.
+
+### Core Logic and Steps
+
+1.  **Component Extraction**: 
+    *   First, the code identifies the background color (the most frequent color).
+    *   It then extracts connected components (4-connected) that are not the background.
+    *   Each component is 'normalized' by shifting its coordinates to start at (0,0).
+
+2.  **Redundancy Filtering**: 
+    *   The algorithm removes any components that are subsets of other components, ensuring that we only work with the 'maximal' structures found in the input.
+
+3.  **Alignment Search**: 
+    *   The script calculates possible 'offsets' between all pairs of components. An offset is considered valid if, when one component is shifted by that offset, its colors match the existing colors of the other component where they overlap.
+    *   It uses a `search` function with backtracking to try and combine all identified components into a single map. It uses a greedy heuristic based on 'quality' (favoring overlaps that involve rare colors, i.e., higher specificity) to prune the search tree.
+
+4.  **Reconstruction**: 
+    *   After the search completes and identifies the optimal assembly of all components, it calculates the bounding box of the merged `cell_map`.
+    *   It then generates a final output grid of the required dimensions, filling it with the combined components and the original background color.
+
+### Key Patterns and Observations
+*   **Overlap as Glue**: The puzzle assumes that components are essentially 'tiles' that share information. By finding where they overlap and checking for color consistency, the code successfully merges fragmented parts into a complete image.
+*   **Specificity Heuristic**: By calculating the 'specificity' (how unique a color is within a component), the algorithm intelligently decides which pieces should be joined first, favoring matches involving less frequent colors, which reduces the chance of accidental or incorrect alignments.
+*   **Flexibility**: The approach is robust because it doesn't assume a fixed grid size or layout; it dynamically builds the output grid based on the cumulative extent of the merged objects.
