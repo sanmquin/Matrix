@@ -807,3 +807,24 @@ The puzzle involves identifying a pattern/shape (of a non-background color) and 
 - **Symmetry/Anchoring:** The red dots serve as the 'anchors' for the transformation. If a dot is at the top, the shape is pushed to the top.
 - **Shift-Based Logic:** The algorithm uses the minimum/maximum row or column index of the shape pixels to calculate the required displacement to reach the target boundary.
 - **Constraint Satisfaction:** The code ensures that pixels overlapping with the axes remain fixed, while others are moved to fill the quadrant boundary.
+
+
+## Task 4c3d4a41
+
+### Strategy Overview
+Task 4c3d4a41 involves transforming a grid divided into two sections by an empty (all-0) column. The left section contains a 'staircase' pattern (composed of color 5), and the right section contains columns of colored data. The goal is to 'push' or 'project' the staircase structure from the left side onto the right side and use it as a mask to reorganize the data in the right section.
+
+### Core Logic and Steps
+1. **Identify Sections:** The code searches for a column consisting entirely of zeros to act as a separator between the left and right halves.
+2. **Staircase Mapping:** It maps the coordinates of color 5 (the staircase) from the left side to the right side. It calculates an `offset` by comparing the column positions of the data columns on the left versus the right.
+3. **Data Extraction:** In the right section, it identifies 'data columns' (columns containing non-0, non-5 values). For each of these columns, it extracts the original color values that reside between the top of the frame and the bottom-most point of the staircase.
+4. **Reorganization:** 
+   - For each data column, the code calculates the 'active area' (rows from the frame top to the staircase base).
+   - It identifies which rows in this area are occupied by the 'staircase' (from the projected mapping) and which are free.
+   - It fills the free rows with the extracted color data, aligning them to the bottom of the active section, and fills the remaining upper rows in that area (as well as the staircase-occupied rows) with color 5 (grey/white).
+5. **Cleanup:** The left side of the output grid is cleared (set to 0), and the right side is updated with the new organized data and the projected staircase mask.
+
+### Summary of Transformations
+- **Projective Mapping:** The structure defined by the left-side staircase is overlaid onto the right-side data columns.
+- **Data Sorting/Alignment:** Within each column, existing data is collected and 'squeezed' toward the bottom of the column's available space, while the projected staircase mask dictates where the grey 'filler' (5) is placed.
+- **Grid Reset:** The input grid's left side is emptied, effectively moving the 'logic' or 'transformation' from the left to represent the final state on the right.
