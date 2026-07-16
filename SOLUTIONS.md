@@ -61,3 +61,21 @@ Task 00dbd492 involves identifying rectangular frames made of color `2` (red) on
 * **Frames as Containers:** The puzzle assumes that all '2' objects represent the perimeter of a container.
 * **Size-Dependent Coloring:** The logic demonstrates an inverse relationship between the container size and the color value, where smaller interiors result in higher color values (e.g., a 3x3 interior results in 24/3 = 8, while larger interiors result in smaller integers).
 * **Robustness:** By using BFS, the code correctly ignores single isolated cells (the interior markers) as separate components when identifying the frames, ensuring only the outer boundary pixels are used to define the area for filling.
+
+
+## Task 03560426
+
+### Strategy Overview
+The objective of this ARC task is to extract all distinct connected colored regions (blobs) from an input grid and re-arrange them into a new grid by 'stacking' or concatenating them sequentially starting from the top-left corner.
+
+### Core Logic and Steps
+1. **Segmentation**: The code performs a Breadth-First Search (BFS) to identify all connected components of the same non-zero color. For each component, it records the color and the dimensions of its bounding box (height and width).
+2. **Ordering**: The `blocks` are sorted. Because the list of blocks is sorted, the objects are processed in a specific spatial order (primary key: column, secondary key: row).
+3. **Reconstruction**: 
+   - A new grid is initialized with zeros.
+   - The code iterates through the identified blocks. For each block, it copies the color into the `result` grid starting at a dynamic `(start_r, start_c)` coordinate.
+   - After placing a block, the origin point `(start_r, start_c)` is shifted by `(height - 1, width - 1)`. This effectively places the next shape so that its top-left corner overlaps with the bottom-right corner of the previous shape.
+
+### Key Patterns Identified
+- **Object Independence**: The input grid is treated as a collection of separate objects rather than a static image.
+- **Sequential Compaction**: The transformation process discards the original spatial distribution of the objects and places them in a cascading sequence. By overlapping the boundaries of the shapes, the code creates a chain of colored regions that move diagonally across the output grid.
