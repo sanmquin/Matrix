@@ -223,3 +223,20 @@ The task requires identifying distinct connected shapes formed by the color `8` 
 ### Key Transformations
 - **Masking**: By marking the component itself as 'visited' during the exterior flood fill, the algorithm treats the shape of `8`s as an impenetrable wall, effectively identifying topological holes within the object.
 - **Mapping**: The solution relies on an explicit `hole_map` to perform the final color assignment, mapping the topological property (number of holes) to the specific output color required by the task specifications.
+
+
+## Task 0b17323b
+
+### Strategy Overview
+The goal of task 0b17323b is to identify a sequence of blue (1) dots arranged in a straight line and extend that line across the grid using red (2) dots, following the established geometric vector.
+
+### Logic and Steps
+1. **Identify Pattern Points**: The algorithm scans the input grid to locate the coordinates of every blue cell (value 1). These cells represent the initial segment of the line.
+2. **Determine Vector**: The points are sorted by row and then column index. The code calculates the step difference (`dr`, `dc`) by subtracting the coordinates of the first blue dot from the second. This vector defines the slope and direction of the line.
+3. **Extrapolate**: Starting from the last known blue dot, the code iteratively adds the vector (`dr`, `dc`) to the current position to generate new coordinates.
+4. **Fill Grid**: For each newly generated coordinate, the algorithm checks if it falls within the grid boundaries. If it does, the cell in the result grid is updated to red (2). This process repeats until the line hits the grid boundary.
+
+### Key Components
+- **Coordinate Extraction**: Nested loops identify the indices of all '1's.
+- **Vector Calculation**: `dr = ones[1][0] - ones[0][0]` and `dc = ones[1][1] - ones[0][1]` encapsulate the linear pattern.
+- **Boundary Clipping**: A `while` loop ensures that extrapolation stops as soon as the calculated coordinates exceed the grid dimensions (`0 <= r < rows and 0 <= c < cols`).
