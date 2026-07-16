@@ -382,3 +382,23 @@ The algorithm treats each non-zero pixel as an anchor point that defines a horiz
 ### Patterns Observed
 - **Proximity-based Zoning**: The vertical space between colored pixels is split evenly to define the influence of each color.
 - **Structural Framing**: The solution differentiates between 'boundary' rows (top, bottom, and anchor row) and 'internal' rows, creating a distinct visual structure of bars and vertical pillars that span the height of the grid.
+
+
+## Task 103eff5b
+
+### Strategy Overview
+The goal of task 103eff5b is to map a source pattern of colored pixels (excluding the background color 8) into a target region defined by a grid of 8s. The transformation involves three main steps: identifying the source pattern, rotating it 90 degrees clockwise, and scaling it to fit the target '8-frame' structure.
+
+### Core Logic
+1. **Extraction**: The algorithm scans the grid to identify two distinct elements: the 'key' (non-zero, non-8 pixels) and the 'shape' (a rectangular boundary or filled area of 8s).
+2. **Transformation**: The key pattern is extracted into a standalone grid. It is then rotated 90 degrees clockwise to align with the orientation required for the transformation.
+3. **Scaling and Mapping**:
+    - The code calculates the dimensions of the '8-shape' bounding box.
+    - It computes the scaling factors (`block_h` and `block_w`) by dividing the dimensions of the 8-shape by the dimensions of the rotated key.
+    - This implies that each pixel in the rotated key corresponds to a sub-block of 8s in the target area.
+4. **Replacement**: The algorithm iterates over the target area (where the 8s were located) and fills these blocks with the corresponding colors from the rotated key pattern. If a cell in the rotated key is 0 (background), it effectively leaves the corresponding area as 8 or preserves the background.
+
+### Key Patterns identified
+- **Pattern Rotation**: The 90-degree clockwise rotation is a mandatory geometric constraint of the transformation.
+- **Block Replication**: The transformation treats the rotated key as a 'low-resolution' template. Each cell in that template is expanded into a larger block within the target area defined by the 8s.
+- **Bounding Box Logic**: The solution relies on calculating the precise boundaries of both the source pattern and the target 8-frame to determine the scale of the mapping process.
