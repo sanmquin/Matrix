@@ -257,3 +257,28 @@ The puzzle involves extracting four distinct 3x3 objects embedded within a large
 * **Segmentation**: The task relies on the visual consistency of the divider lines to define the spatial boundaries of the sub-problems.
 * **Cropping**: By finding the `min/max` row and column indices of non-zero cells, the algorithm effectively trims excess background (zero-value) space surrounding the relevant patterns in each quadrant.
 * **Normalization**: Regardless of the input grid size or the precise position of the internal patterns, the reassembly logic enforces a fixed 6x6 output structure.
+
+
+## Task 0becf7df
+
+### Strategy Summary
+The solution for ARC task `0becf7df` identifies a mapping defined by the contents of the top-left 2x2 subgrid and applies that mapping to the remainder of the grid. Specifically, it swaps the colors (pixel values) within each of the two rows of the 2x2 corner, establishing a transformation rule that is then propagated to all non-zero pixels in the rest of the grid.
+
+### Key Logic and Steps
+
+1.  **Extraction of the Transformation Rule**:
+    *   The code inspects the top-left 2x2 section of the grid.
+    *   It creates a `mapping` dictionary that swaps elements within each row: `grid[0][0]` maps to `grid[0][1]` and vice versa, while `grid[1][0]` maps to `grid[1][1]` and vice versa.
+
+2.  **Grid Transformation**:
+    *   The algorithm iterates through every cell `(r, c)` in the grid.
+    *   It skips the top-left 2x2 region where the transformation key was defined.
+    *   For all other cells, if the cell contains a non-zero value that exists as a key in the `mapping` dictionary, it replaces the pixel value with the corresponding mapped value.
+
+3.  **Result Construction**:
+    *   A deep copy of the original grid is created to avoid mutating the input while generating the result.
+    *   The transformation preserves the original structure of the grid, only altering the color values based on the learned 2x2 pattern.
+
+### Patterns Identified
+*   **Local-to-Global Mapping**: The solution assumes that the logic governing the entire grid is encapsulated in the 2x2 subgrid at the origin. 
+*   **Selective Transformation**: Only non-zero values (presumably representing colored objects) are transformed, while empty spaces (represented by 0) remain untouched.
