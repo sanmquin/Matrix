@@ -240,3 +240,20 @@ The goal of task 0b17323b is to identify a sequence of blue (1) dots arranged in
 - **Coordinate Extraction**: Nested loops identify the indices of all '1's.
 - **Vector Calculation**: `dr = ones[1][0] - ones[0][0]` and `dc = ones[1][1] - ones[0][1]` encapsulate the linear pattern.
 - **Boundary Clipping**: A `while` loop ensures that extrapolation stops as soon as the calculated coordinates exceed the grid dimensions (`0 <= r < rows and 0 <= c < cols`).
+
+
+## Task 0bb8deee
+
+### Logic Summary
+The puzzle involves extracting four distinct 3x3 objects embedded within a larger grid, which is segmented by a horizontal and vertical cross-shaped divider. The solution identifies these dividers to isolate four quadrants, crops the non-zero content within each, and reassembles them into a single 6x6 output grid.
+
+### Core Steps
+1. **Divider Detection**: The code scans the grid to identify a row and a column that consist entirely of a single non-zero color. These act as cross-hair dividers that partition the grid into four quadrants.
+2. **Quadrant Partitioning**: Using the indices of the identified dividers (`h_div`, `v_div`), the grid is divided into four regions: top-left, top-right, bottom-left, and bottom-right.
+3. **Patch Extraction**: For each quadrant, the code computes the bounding box of non-zero pixels. It extracts the rectangular sub-grid representing the pattern within that quadrant.
+4. **Grid Reassembly**: The extracted patches are concatenated. The top-left and top-right patches are joined horizontally to form the top half, and the bottom-left and bottom-right patches are joined to form the bottom half, resulting in a consolidated 6x6 grid.
+
+### Patterns and Transformations
+* **Segmentation**: The task relies on the visual consistency of the divider lines to define the spatial boundaries of the sub-problems.
+* **Cropping**: By finding the `min/max` row and column indices of non-zero cells, the algorithm effectively trims excess background (zero-value) space surrounding the relevant patterns in each quadrant.
+* **Normalization**: Regardless of the input grid size or the precise position of the internal patterns, the reassembly logic enforces a fixed 6x6 output structure.
