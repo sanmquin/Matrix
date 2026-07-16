@@ -199,3 +199,27 @@ The solution extracts the essential structure of the input grid by identifying s
 * **DFS for Connectivity**: By grouping pixels into components, the algorithm effectively ignores noise or internal lines, focusing on the overall shape defined by connected colors.
 * **Heuristic Clustering**: The `cluster_by_gaps` function is a clever way to normalize irregular grids. It essentially asks: "How far apart are these objects?" and treats large jumps as boundaries between grid rows/columns.
 * **Dimensionality Reduction**: The task transforms a large, noisy, pixel-dense input into a compact matrix, representing the high-level arrangement of the detected rectangles.
+
+
+## Task 0a2355a6
+
+### Logic Overview
+The task requires identifying distinct connected shapes formed by the color `8` (azure) and recoloring them based on the number of enclosed empty spaces (holes) within each shape. The core strategy involves finding each object of `8`s, isolating the empty cells (`0`s) that are fully enclosed by these objects, counting those separate enclosures, and applying a mapping to determine the final color.
+
+### Core Steps
+1. **Component Extraction**: The code uses a `flood_fill` algorithm to group all contiguous pixels of color `8` into separate connected components.
+2. **Hole Identification**:
+   - For each component, a bounding box is defined with a 1-pixel buffer.
+   - Any `0`-pixel within this box that is reachable from the boundary of the box is considered 'exterior'.
+   - Any `0`-pixel that remains unreachable (not part of the exterior flood fill) is classified as part of an 'enclosed hole'.
+3. **Hole Counting**: The algorithm further segments these trapped `0`-pixels into distinct islands. A second `flood_fill` is performed on the hole cells to count how many separate regions of empty space are enclosed by the current component of `8`s.
+4. **Recoloring**: The component is recolored based on the number of enclosed hole regions. The mapping used is:
+   - 1 hole → Color 1 (Blue)
+   - 2 holes → Color 3 (Green)
+   - 3 holes → Color 2 (Red)
+   - 4 holes → Color 4 (Yellow)
+   - (Defaults to keeping the count as the color for higher numbers).
+
+### Key Transformations
+- **Masking**: By marking the component itself as 'visited' during the exterior flood fill, the algorithm treats the shape of `8`s as an impenetrable wall, effectively identifying topological holes within the object.
+- **Mapping**: The solution relies on an explicit `hole_map` to perform the final color assignment, mapping the topological property (number of holes) to the specific output color required by the task specifications.
