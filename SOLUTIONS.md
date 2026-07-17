@@ -556,3 +556,20 @@ The ARC task 14754a24 involves identifying specific 'plus-sign' (or cross) struc
 - **Pattern**: A 'plus-sign' is defined by a central cell and its adjacent cells (up, down, left, right).
 - **Constraint**: The transformation is selective. Not all 5s are turned into 2s; only those that reside within a confirmed geometric plus-sign structure that supports the presence of the 4s are transformed.
 - **Flexibility**: The code handles partial crosses (where some arms hit the grid boundary) gracefully by checking bounds during the validation phase.
+
+
+## Task 15113be4
+
+### Strategy Summary
+The task involves identifying a 6x6 pattern defined by a colored shape (the 'template') located within an 8x8 frame in one of the corners of a 22x22 grid. The goal is to detect instances of this template in other 3x3 cells across the grid (arranged in a 6x6 layout of cells) and fill them with the specific 'color' identified from the original frame.
+
+### Key Steps and Logic
+1. **Identify the Target Color and Box**: The code scans the grid to find a non-background color (excluding 0, 1, and 4). It then locates the 8x8 box containing this color to determine which corner of the main grid it occupies.
+2. **Extract the Template**: Within the 8x8 box, the code ignores the 1-pixel border (the '4's) to access the 6x6 interior. It divides this 6x6 area into nine 2x2 blocks. A 3x3 binary `template` is generated: a cell in the template is set to 1 if any cell within the corresponding 2x2 block in the interior is colored with the target color.
+3. **Map Grid Coordinates**: The grid is conceptually treated as a 6x6 arrangement of 3x3 cells (starting at offsets defined in `cell_starts`). The code excludes the quadrant where the original 8x8 box resides.
+4. **Pattern Matching and Filling**: The code iterates through every potential 3x3 cell location in the grid. For each location, it checks if the background (consisting of '1's) matches the template's '1' positions. If a match is found, it copies the target color into the grid at the corresponding template positions.
+
+### Patterns and Transformations
+* **Template Extraction**: The 2x2 to 3x3 mapping acts as a downsampling/feature extraction step to simplify complex shapes into a binary mask.
+* **Conditional Application**: The logic ensures the original source box is not overwritten by skipping the `box_crs` and `box_ccs` quadrants.
+* **Implicit Rules**: The background is assumed to be composed of '1's, which are used as placeholders to be replaced by the target color only where the template structure matches.
