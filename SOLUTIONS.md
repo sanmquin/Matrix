@@ -821,3 +821,25 @@ The task 1acc24af involves identifying 'rooms' (enclosed areas of 0s) and 'blobs
 - `_rotate90cw`: Rotates a shape 90 degrees clockwise for the orientation testing phase.
 - `_contains_subgraph`: Determines if a shape fits inside another using bounding box offsets.
 - `_bbox`: Calculates the rectangular dimensions of a shape, used to verify size constraints during matching.
+
+
+## Task 1c02dbbe
+
+### Strategy Summary
+The task involves processing a grid containing a central gray (color 5) rectangular frame and various colored markers positioned outside and at the corners of that frame. The goal is to subdivide the gray rectangle into smaller, color-coded regions based on the positions of these markers.
+
+### Core Logic
+1. **Identify the Bounding Box**: The algorithm first scans the grid for all cells with color 5 to determine the `r_min`, `r_max`, `c_min`, and `c_max` coordinates. This defines the boundaries of the central gray rectangular region.
+2. **Categorize Markers**: It collects all non-zero, non-5 cells. Each color group consists of exactly three markers:
+   - One marker located **inside** the rectangle (at a corner).
+   - Two markers located **outside** the rectangle, which define the splitting lines for the rows and columns.
+3. **Calculate Sub-regions**: The corner marker identifies which quadrant of the rectangle is being manipulated (top-left, top-right, bottom-left, or bottom-right). 
+   - The `row_split` and `col_split` extracted from the outside markers act as coordinates that divide the rectangle.
+   - The logic maps the corner marker's location to the corresponding subsection of the rectangle: `rs` (row start), `re` (row end), `cs` (column start), and `ce` (column end).
+4. **Fill Output**: A new grid is initialized with zeros, filled with the base color 5, and then overwritten by the calculated colored sub-regions based on the markers.
+
+### Key Steps
+- **Bounding Box Detection**: Ensures the entire gray area is identified for potential overwriting.
+- **Marker Mapping**: Uses coordinate comparison (`r < r_min` or `c < c_min`, etc.) to distinguish between which marker defines the row boundary and which defines the column boundary.
+- **Quadrant Assignment**: Uses conditional logic (`if cr == r_min and cc == c_min`) to handle the geometric transformation of the rectangle, ensuring that only the relevant portion is filled with the target color.
+- **Filling**: Performs a nested loop iteration over the derived ranges `range(rs, re + 1)` and `range(cs, ce + 1)` to apply the color.
