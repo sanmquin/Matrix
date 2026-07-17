@@ -573,3 +573,87 @@ The task involves identifying a 6x6 pattern defined by a colored shape (the 'tem
 * **Template Extraction**: The 2x2 to 3x3 mapping acts as a downsampling/feature extraction step to simplify complex shapes into a binary mask.
 * **Conditional Application**: The logic ensures the original source box is not overwritten by skipping the `box_crs` and `box_ccs` quadrants.
 * **Implicit Rules**: The background is assumed to be composed of '1's, which are used as placeholders to be replaced by the target color only where the template structure matches.
+
+
+## Task 15663ba9
+
+### Strategy Summary
+The task 15663ba9 requires identifying and coloring specific vertices (corners) of non-zero shapes within a grid. The solution distinguishes between **convex (outer)** corners and **concave (inner)** corners based on their spatial orientation relative to the shape's interior and the surrounding background.
+
+### Key Components and Logic
+
+1. **Flood Fill (Exterior Identification):**
+   - The code first identifies all '0' (background) cells that are connected to the grid boundary. This differentiates the "outside" of the grid from any "holes" inside a shape. It uses a queue-based Breadth-First Search (BFS) starting from the border.
+
+2. **Corner Detection:**
+   - It iterates through every non-zero cell and checks if it is a corner by looking at its 4-connected neighbors. A cell is a potential corner if it has exactly two non-zero neighbors that are perpendicular to each other.
+
+3. **Classification of Corners:**
+   - **Convex (Outer) Corners:** If the diagonal cell (the one completing the square of the corner) is empty (0) and is *not* part of the exterior (meaning it is a hole inside the object or the space is constrained), the corner is marked with color **4**.
+   - **Concave (Inner) Corners:** If the diagonal cell is occupied (non-zero) or lies outside the grid boundaries, the corner is marked with color **2**.
+
+### Transformation Rules
+- **Rule 1:** Only cells forming a 90-degree angle (L-junction) are processed.
+- **Rule 2:** Background color '0' acts as a reference point to differentiate between an "outer edge" of a shape and an "inner indentation."
+- **Rule 3:** The result preserves the original grid structure, only updating the values of the identified corner pixels.
+
+
+## Task 15696249
+
+### Strategy Overview
+The task requires transforming a 3x3 input grid into a 9x9 output grid. The transformation is guided by detecting 'uniform lines' within the input. Specifically, if a row or column in the 3x3 grid contains identical values, that line acts as the trigger for a tiling operation into the 9x9 space.
+
+### Core Logic
+1. **Initialization**: An empty 9x9 grid is created, filled with zeros.
+2. **Pattern Identification**:
+   - **Row Uniformity**: The solver first iterates through the rows of the 3x3 input. If a row consists of three identical values, the algorithm treats the 9x9 grid as a 3x3 'meta-grid' of 3x3 blocks. It fills the entire specified meta-row (three blocks horizontally) with the full 3x3 input pattern.
+   - **Column Uniformity**: If no rows are uniform, the solver checks for column uniformity. If a column consists of three identical values, it fills the entire specified meta-column (three blocks vertically) with the full 3x3 input pattern.
+3. **Tiling Execution**:
+   - The nested loops (`for dr in range(3): for dc in range(3):`) copy the input grid into the corresponding 3x3 blocks of the output grid. 
+   - For rows, the block coordinates are `(r*3, meta_c*3)`. 
+   - For columns, the block coordinates are `(meta_r*3, c*3)`.
+
+### Summary of Rules
+- **Input**: 3x3 grid.
+- **Output**: 9x9 grid.
+- **Constraint**: Only one uniform row or column is targeted. If a row is found, the tiling happens horizontally across the meta-row; if a column is found, tiling happens vertically across the meta-column. Cells not part of the tiled regions remain 0.
+
+
+## Task 17b80ad2
+
+### Strategy Summary
+The task requires propagating values vertically within specific columns. The transformation is driven by a 'control row' (the last row of the input grid), where the presence of the digit `5` acts as a trigger to perform a column-wise fill operation.
+
+### Core Logic
+1. **Identify Trigger Columns**: The algorithm scans the last row of the input grid. Any column index containing the value `5` is marked for processing.
+2. **Collect Non-Zero Values**: For each marked column, the algorithm extracts all existing non-zero values and their corresponding row indices.
+3. **Vertical Propagation**: The algorithm performs a downward fill pattern: 
+   - For every found value at row `r` in a marked column, the code propagates this value upwards to all cells starting from the row immediately below the previous value (or the top of the column) down to the current row `r`.
+   - Effectively, this means each non-zero value 'stretches' to fill the empty space (0s) above it up to the previous known value in that column.
+
+### Key Transformation Rules
+- **Triggered Execution**: Only columns that have a `5` in the bottom row are affected. Other columns remain unchanged.
+- **Value Stretching**: Non-zero values act as 'anchors' that fill the empty cells (0s) located above them in the same column, creating a solid block of color starting from the topmost non-zero value down to the bottom-most non-zero value in that column.
+- **Grid Integrity**: The transformation is performed on a copy of the original grid to ensure that processed values in one column do not interfere with calculations in another.
+
+
+## Task 17cae0c1
+
+### Strategy Summary
+The ARC task 17cae0c1 involves transforming a 3x9 input grid into a 3x9 output grid. The input grid is conceptually partitioned into three side-by-side 3x3 tiles. The logic identifies the geometric pattern formed by the digit `5` (gray) within each 3x3 tile and maps that specific pattern to a unique output color (represented by a full 3x3 block of that color).
+
+### Core Logic
+1. **Grid Segmentation**: The input grid is divided into three sections of size 3x3 (columns 0-2, 3-5, and 6-8).
+2. **Pattern Recognition**: For each 3x3 section, the code extracts the configuration of the digit `5`. This configuration is stored as a tuple of tuples, effectively serving as a hashable signature of the tile's content.
+3. **Mapping**: A dictionary (`pattern_to_color`) acts as a lookup table, associating specific spatial arrangements of `5`s with target integers (colors).
+4. **Reconstruction**: Once a pattern is matched to a color, the corresponding section in the output grid is filled entirely with that color (a 3x3 block).
+
+### Pattern Dictionary
+The lookup table defines the following relationships:
+* **Ring of 5s** ((5,5,5), (5,0,5), (5,5,5)) → **Color 3 (Green)**
+* **Center dot** ((0,0,0), (0,5,0), (0,0,0)) → **Color 4 (Yellow)**
+* **Anti-diagonal** ((0,0,5), (0,5,0), (5,0,0)) → **Color 9 (Maroon)**
+* **Bottom row** ((0,0,0), (0,0,0), (5,5,5)) → **Color 1 (Blue)**
+* **Top row** ((5,5,5), (0,0,0), (0,0,0)) → **Color 6 (Magenta)**
+
+This approach transforms a shape-based puzzle into a classification problem, where the spatial arrangement within discrete blocks dictates the final color fill of those blocks.
