@@ -478,3 +478,27 @@ The solution uses a **connected-components filtering** approach. It identifies a
 ### Core Patterns
 - **4-Connectivity**: The solution treats adjacent cells (up, down, left, right) as connected if they share the same color.
 - **Filtering**: The task effectively filters noise or "small" elements from the scene by replacing them with a uniform color (`3`), while preserving larger, more structurally significant objects.
+
+
+## Task 13713586
+
+### Strategy Overview
+The goal of this task is to perform an 'extension' or 'projection' operation. The input grid contains a 'wall' made of gray pixels (value 5) and various colored segments. The task is to extend each colored segment perpendicularly toward the wall until it meets the wall, effectively filling the space between the segment and the wall with the segment's color.
+
+### Core Logic
+1. **Wall Detection:** The code first scans the grid to identify if there is a complete horizontal or vertical line consisting entirely of the color 5. This wall serves as the anchor point for the extension process.
+2. **Segment Identification:** 
+   - Depending on the wall's orientation (row or column), the code iterates through the grid to locate contiguous colored pixels (excluding 0s and 5s).
+   - For each identified segment, it determines its 'distance' from the wall.
+3. **Projection/Extension:**
+   - The code calculates the bounding rectangle that spans from the segment to the wall.
+   - **Priority Order:** The segments are sorted by their distance from the wall in descending order. By painting the farthest segments first and moving toward the wall, the solution ensures that closer segments naturally overlap and overwrite any projections from further segments, correctly handling cases where multiple colored shapes exist in the same line of projection.
+
+### Key Functions and Steps
+* **Finding the Wall:** Iterates through rows and columns to find the index of the line composed entirely of 5s.
+* **Segment Parsing:** Uses a `while` loop to group adjacent pixels of the same color into horizontal or vertical segments.
+* **Painting:** Using nested loops, it populates the result grid with the segment's color within the rectangular boundary defined by the segment's coordinates and the wall's position.
+
+### Rules Identified
+* **Directionality:** Colors only extend in the direction of the gray wall.
+* **Layering:** The closer the original colored block is to the wall, the more 'priority' it has in the final output, as it is processed last in the sequence.
