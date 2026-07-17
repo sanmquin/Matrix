@@ -457,3 +457,24 @@ The solution for ARC task 12997ef3 identifies a 'template' pattern defined by ce
 - **Mask Extraction**: The `template` is essentially a local coordinate map of the `1`s, normalized to the top-left of the bounding box.
 - **Conditional Construction**: The final result grid is constructed by iterating through either the ordered row or column markers. For each marker, it maps the `template` mask onto the final grid, replacing `1`s with the marker's color value and leaving other cells as `0`.
 - **Pattern Recognition**: The solution relies on the inherent geometry of the input: if markers are aligned horizontally, the output is a single-row composite; if aligned vertically, it is a single-column composite.
+
+
+## Task 12eac192
+
+### Strategy Summary
+The solution uses a **connected-components filtering** approach. It identifies all distinct colored objects (4-connected regions) in the grid and evaluates the size of each. Objects that are too small are transformed into a specific color (green, value 3), while larger objects remain unchanged.
+
+### Key Logic and Steps
+1. **Initialization**: Create a copy of the original grid to serve as the output (`result`), ensuring we can modify values while iterating.
+2. **Color Identification**: Scan the grid to build a set of all unique non-zero colors present.
+3. **Component Detection (BFS)**:
+   - For each color, the code performs a Breadth-First Search (BFS) to group all contiguous pixels of that specific color.
+   - A `visited` matrix is maintained for each color pass to ensure each pixel is processed exactly once per color group.
+4. **Transformation Rule**:
+   - **Condition**: For every detected connected component, calculate the number of pixels (size).
+   - **Size < 3**: If a component has fewer than 3 pixels, it is considered "small" and all pixels within that component are updated to color `3` in the `result` grid.
+   - **Size >= 3**: If a component has 3 or more pixels, it is preserved in its original color.
+
+### Core Patterns
+- **4-Connectivity**: The solution treats adjacent cells (up, down, left, right) as connected if they share the same color.
+- **Filtering**: The task effectively filters noise or "small" elements from the scene by replacing them with a uniform color (`3`), while preserving larger, more structurally significant objects.
