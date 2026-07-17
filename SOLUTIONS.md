@@ -502,3 +502,74 @@ The goal of this task is to perform an 'extension' or 'projection' operation. Th
 ### Rules Identified
 * **Directionality:** Colors only extend in the direction of the gray wall.
 * **Layering:** The closer the original colored block is to the wall, the more 'priority' it has in the final output, as it is processed last in the sequence.
+
+
+## Task 137f0df0
+
+### Strategy Summary
+The ARC task 137f0df0 involves identifying a rectangular bounding box defined by grey (5) pixels. The objective is to fill the interior of this bounding box by coloring the gaps (0 pixels) based on their spatial orientation relative to the grey boundaries. The transformation applies two distinct colors (red/2 and blue/1) depending on whether the empty cell aligns with the row or column axes of the existing grey structure.
+
+### Core Steps
+1. **Identify the Bounding Box**: The code scans the input grid for the integer `5` (grey). It determines the `min` and `max` indices for both rows and columns where these pixels exist to establish the global bounds of the shape.
+2. **Identify Separators**: It identifies 'gaps' within the rectangular span of the bounding box. `sep_rows` are the indices between the min and max row index that do *not* contain a grey pixel. Similarly, `sep_cols` are identified for columns.
+3. **Conditional Coloring**: The code iterates through the grid and modifies only the empty (`0`) cells within the identified bounding box area:
+   - **Red (2)**: Applied to cells that are located at the intersection of a separator row and a separator column, or if a cell falls in a separator row *and* inside the column bounds (or vice versa).
+   - **Blue (1)**: Applied to cells that are strictly within a separator row or separator column, but do not meet the criteria for red.
+
+### Transformation Rules
+- The transformation essentially fills the cross-sections of the grid delineated by the grey pixels.
+- Any empty space within the bounding box is filled with either `1` or `2`, effectively creating a grid pattern or a 'cross' look within the original bounds established by the color 5 pixels.
+- The logic assumes that the input structure provides a frame, and the empty space inside that frame is filled using a deterministic priority based on column/row intersections.
+
+
+## Task 140c817e
+
+### Strategy Summary
+The task involves transforming an input grid by using the positions of the digit '1' as anchors to create a cross pattern and surrounding diagonal markers. The process involves identifying a background color, generating an overlay of cross-hair lines, placing special secondary markers, and finally resetting the anchors.
+
+### Core Steps
+1. **Initialization**: The code identifies all coordinates containing the digit '1' and determines the background color (the value of any non-1 cell).
+2. **Cross Generation**: A new grid is initialized with the background color. For every original '1' position, the code draws a full row and full column of '1's, effectively creating a cross-hair centered at each original '1'.
+3. **Diagonal Marker Placement**: The code identifies the diagonal neighbors (offsets: `[-1, -1], [-1, 1], [1, -1], [1, 1]`) of each original '1' position. If a diagonal cell is within grid boundaries and is not already part of a cross-hair ('1'), it is marked with the value '3'.
+4. **Final Anchor Update**: After the lines and diagonal markers are drawn, the code iterates back through the original '1' positions and overwrites them with the value '2'.
+
+### Key Logic & Patterns
+- **Hierarchy of Overlays**: The solution follows a specific priority: first define lines (1s), then fill empty diagonal gaps (3s), and finally emphasize the center point (2). 
+- **Spatial Transformation**: The transformation essentially turns sparse '1' points into structural intersections. The cross-hairs represent global row/column influence, while the '3's represent local neighborhood expansion, and the '2's mark the specific coordinate origins.
+
+
+## Task 14754a24
+
+### Logic and Strategy
+The ARC task 14754a24 involves identifying specific 'plus-sign' (or cross) structures within a grid composed of 4s and 5s. The goal is to identify which 5s are part of valid cross patterns containing at least two 4s, and then update those specific 5s to 2s. The problem is treated as an **exact cover/tiling problem**, where every 4 in the grid must be accounted for by one of the selected cross shapes.
+
+### Core Steps
+1. **Preprocessing**: The code first identifies the coordinates of all 4s in the input grid.
+2. **Identifying Potential Crosses**: It iterates through every cell in the grid as a potential center of a plus-sign. A potential cross includes the center and its four cardinal neighbors. A cross is considered 'valid' if:
+   - All its cells are within bounds.
+   - All its cells contain either a 4 or a 5 (no 0s or other values).
+   - It contains at least two 4s.
+3. **Backtracking (Exact Cover)**: Because crosses can overlap or share 4s, the code uses a recursive backtracking algorithm to find a subset of valid crosses that collectively 'cover' all 4s present in the grid.
+4. **Transformation**: Once the optimal set of crosses is found, the algorithm iterates through those specific crosses and updates any 5s located within them to 2s in the final output grid.
+
+### Patterns and Rules
+- **Pattern**: A 'plus-sign' is defined by a central cell and its adjacent cells (up, down, left, right).
+- **Constraint**: The transformation is selective. Not all 5s are turned into 2s; only those that reside within a confirmed geometric plus-sign structure that supports the presence of the 4s are transformed.
+- **Flexibility**: The code handles partial crosses (where some arms hit the grid boundary) gracefully by checking bounds during the validation phase.
+
+
+## Task 15113be4
+
+### Strategy Summary
+The task involves identifying a 6x6 pattern defined by a colored shape (the 'template') located within an 8x8 frame in one of the corners of a 22x22 grid. The goal is to detect instances of this template in other 3x3 cells across the grid (arranged in a 6x6 layout of cells) and fill them with the specific 'color' identified from the original frame.
+
+### Key Steps and Logic
+1. **Identify the Target Color and Box**: The code scans the grid to find a non-background color (excluding 0, 1, and 4). It then locates the 8x8 box containing this color to determine which corner of the main grid it occupies.
+2. **Extract the Template**: Within the 8x8 box, the code ignores the 1-pixel border (the '4's) to access the 6x6 interior. It divides this 6x6 area into nine 2x2 blocks. A 3x3 binary `template` is generated: a cell in the template is set to 1 if any cell within the corresponding 2x2 block in the interior is colored with the target color.
+3. **Map Grid Coordinates**: The grid is conceptually treated as a 6x6 arrangement of 3x3 cells (starting at offsets defined in `cell_starts`). The code excludes the quadrant where the original 8x8 box resides.
+4. **Pattern Matching and Filling**: The code iterates through every potential 3x3 cell location in the grid. For each location, it checks if the background (consisting of '1's) matches the template's '1' positions. If a match is found, it copies the target color into the grid at the corresponding template positions.
+
+### Patterns and Transformations
+* **Template Extraction**: The 2x2 to 3x3 mapping acts as a downsampling/feature extraction step to simplify complex shapes into a binary mask.
+* **Conditional Application**: The logic ensures the original source box is not overwritten by skipping the `box_crs` and `box_ccs` quadrants.
+* **Implicit Rules**: The background is assumed to be composed of '1's, which are used as placeholders to be replaced by the target color only where the template structure matches.
