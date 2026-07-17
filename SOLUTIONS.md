@@ -402,3 +402,103 @@ The goal of task 103eff5b is to map a source pattern of colored pixels (excludin
 - **Pattern Rotation**: The 90-degree clockwise rotation is a mandatory geometric constraint of the transformation.
 - **Block Replication**: The transformation treats the rotated key as a 'low-resolution' template. Each cell in that template is expanded into a larger block within the target area defined by the 8s.
 - **Bounding Box Logic**: The solution relies on calculating the precise boundaries of both the source pattern and the target 8-frame to determine the scale of the mapping process.
+
+
+## Task 11e1fe23
+
+### Strategy Summary
+The task 11e1fe23 involves identifying three colored pixels (non-zero) on a background and rearranging them to form a compact triangular pattern centered around a new anchor point. The logic relies on finding a geometric center that is equidistant from the three original points, placing a gray (5) pixel at that center, and shifting the original colored pixels one step closer to that center.
+
+### Core Steps
+1. **Identify Points**: The code first scans the input grid to locate all non-zero pixels, storing their coordinates and values.
+2. **Geometric Center Calculation**: 
+   - The algorithm iterates through pairs of the identified points to find a potential midpoint.
+   - It checks the **Chebyshev distance** (the maximum of the horizontal and vertical differences) from this midpoint to all three points.
+   - It validates the center by ensuring that all three points are equidistant from it. This defines the 'center' of the equilateral-like arrangement.
+3. **Transformation**:
+   - **Anchor Placement**: A pixel of color 5 (gray) is placed at the calculated center coordinate.
+   - **Repositioning**: Each original colored pixel is moved one unit step closer to the center coordinate. The direction of the move is determined by the sign of the difference between the original pixel coordinate and the center coordinate (`dr` and `dc` are calculated as -1, 0, or 1).
+
+### Key Patterns
+- The transformation essentially 'collapses' the scattered colored points toward a central point while adding a specific marker (color 5) at the core.
+- The use of Chebyshev distance is crucial here because the grid movement occurs in 8 possible directions (horizontal, vertical, and diagonal), which is the geometric property defined by the Chebyshev distance.
+
+
+## Task 12422b43
+
+### Strategy Summary
+The task requires completing a grid by identifying a repeating pattern (a 'template') embedded in the input and filling subsequent empty rows with that pattern. The template is defined by rows containing the value `5`.
+
+### Key Steps
+1. **Template Identification**: The code scans all rows in the input grid. Any row containing the value `5` is designated as part of the template. 
+2. **Template Normalization**: The template is stored as a list of rows where all instances of `5` are replaced with `0` (background color).
+3. **Empty Row Detection**: The code identifies the first row in the grid consisting entirely of zeros (`0`). 
+4. **Cyclic Filling**: Starting from the first empty row, the code iterates through the remaining rows of the grid. It fills these empty rows using the rows of the normalized template in a cyclic, repeating order (`t_idx % len(template)`).
+
+### Patterns and Logic
+* **Anchor Rows**: Rows containing the digit `5` serve as the source of truth for the pattern.
+* **Cyclical Repetition**: The transformation assumes a vertical repetition logic. Once the 'empty' space is reached, the pattern repeats vertically until the grid boundaries are met.
+* **Background Handling**: The value `5` acts as a marker/indicator in the input but is treated as empty space (`0`) in the generated output, allowing for seamless integration of the pattern into the rest of the grid.
+
+
+## Task 12997ef3
+
+### Logic Overview
+The solution for ARC task 12997ef3 identifies a 'template' pattern defined by cells with a value of `1` and reproduces this pattern across a new grid, coloring each instance according to colored markers (non-0, non-1 values) provided in the input grid. The spatial arrangement of these markers dictates whether the template copies are tiled horizontally or stacked vertically.
+
+### Core Steps
+1. **Identify the Template**: The code scans the input grid to locate all cells containing `1`. It extracts the minimal bounding box containing these ones to create a binary mask (`template`).
+2. **Identify Color Markers**: It scans the input for any cells containing values other than `0` or `1`. These act as both placeholders for the template and indicators for the color to be used for that specific template instance.
+3. **Determine Layout Logic**:
+   - **Horizontal Tiling**: If all identified color markers share the same row, the algorithm assumes a horizontal layout. It sorts the markers by their column index and constructs a new wide grid where each template is placed side-by-side, filled with the marker's color.
+   - **Vertical Stacking**: If the color markers share the same column, the algorithm assumes a vertical layout. It sorts the markers by their row index and constructs a new tall grid by stacking the colored templates on top of one another.
+
+### Helper Functions & Patterns
+- **Mask Extraction**: The `template` is essentially a local coordinate map of the `1`s, normalized to the top-left of the bounding box.
+- **Conditional Construction**: The final result grid is constructed by iterating through either the ordered row or column markers. For each marker, it maps the `template` mask onto the final grid, replacing `1`s with the marker's color value and leaving other cells as `0`.
+- **Pattern Recognition**: The solution relies on the inherent geometry of the input: if markers are aligned horizontally, the output is a single-row composite; if aligned vertically, it is a single-column composite.
+
+
+## Task 12eac192
+
+### Strategy Summary
+The solution uses a **connected-components filtering** approach. It identifies all distinct colored objects (4-connected regions) in the grid and evaluates the size of each. Objects that are too small are transformed into a specific color (green, value 3), while larger objects remain unchanged.
+
+### Key Logic and Steps
+1. **Initialization**: Create a copy of the original grid to serve as the output (`result`), ensuring we can modify values while iterating.
+2. **Color Identification**: Scan the grid to build a set of all unique non-zero colors present.
+3. **Component Detection (BFS)**:
+   - For each color, the code performs a Breadth-First Search (BFS) to group all contiguous pixels of that specific color.
+   - A `visited` matrix is maintained for each color pass to ensure each pixel is processed exactly once per color group.
+4. **Transformation Rule**:
+   - **Condition**: For every detected connected component, calculate the number of pixels (size).
+   - **Size < 3**: If a component has fewer than 3 pixels, it is considered "small" and all pixels within that component are updated to color `3` in the `result` grid.
+   - **Size >= 3**: If a component has 3 or more pixels, it is preserved in its original color.
+
+### Core Patterns
+- **4-Connectivity**: The solution treats adjacent cells (up, down, left, right) as connected if they share the same color.
+- **Filtering**: The task effectively filters noise or "small" elements from the scene by replacing them with a uniform color (`3`), while preserving larger, more structurally significant objects.
+
+
+## Task 13713586
+
+### Strategy Overview
+The goal of this task is to perform an 'extension' or 'projection' operation. The input grid contains a 'wall' made of gray pixels (value 5) and various colored segments. The task is to extend each colored segment perpendicularly toward the wall until it meets the wall, effectively filling the space between the segment and the wall with the segment's color.
+
+### Core Logic
+1. **Wall Detection:** The code first scans the grid to identify if there is a complete horizontal or vertical line consisting entirely of the color 5. This wall serves as the anchor point for the extension process.
+2. **Segment Identification:** 
+   - Depending on the wall's orientation (row or column), the code iterates through the grid to locate contiguous colored pixels (excluding 0s and 5s).
+   - For each identified segment, it determines its 'distance' from the wall.
+3. **Projection/Extension:**
+   - The code calculates the bounding rectangle that spans from the segment to the wall.
+   - **Priority Order:** The segments are sorted by their distance from the wall in descending order. By painting the farthest segments first and moving toward the wall, the solution ensures that closer segments naturally overlap and overwrite any projections from further segments, correctly handling cases where multiple colored shapes exist in the same line of projection.
+
+### Key Functions and Steps
+* **Finding the Wall:** Iterates through rows and columns to find the index of the line composed entirely of 5s.
+* **Segment Parsing:** Uses a `while` loop to group adjacent pixels of the same color into horizontal or vertical segments.
+* **Painting:** Using nested loops, it populates the result grid with the segment's color within the rectangular boundary defined by the segment's coordinates and the wall's position.
+
+### Rules Identified
+* **Directionality:** Colors only extend in the direction of the gray wall.
+* **Layering:** The closer the original colored block is to the wall, the more 'priority' it has in the final output, as it is processed last in the sequence.
