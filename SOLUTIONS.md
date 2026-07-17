@@ -502,3 +502,21 @@ The goal of this task is to perform an 'extension' or 'projection' operation. Th
 ### Rules Identified
 * **Directionality:** Colors only extend in the direction of the gray wall.
 * **Layering:** The closer the original colored block is to the wall, the more 'priority' it has in the final output, as it is processed last in the sequence.
+
+
+## Task 137f0df0
+
+### Strategy Summary
+The ARC task 137f0df0 involves identifying a rectangular bounding box defined by grey (5) pixels. The objective is to fill the interior of this bounding box by coloring the gaps (0 pixels) based on their spatial orientation relative to the grey boundaries. The transformation applies two distinct colors (red/2 and blue/1) depending on whether the empty cell aligns with the row or column axes of the existing grey structure.
+
+### Core Steps
+1. **Identify the Bounding Box**: The code scans the input grid for the integer `5` (grey). It determines the `min` and `max` indices for both rows and columns where these pixels exist to establish the global bounds of the shape.
+2. **Identify Separators**: It identifies 'gaps' within the rectangular span of the bounding box. `sep_rows` are the indices between the min and max row index that do *not* contain a grey pixel. Similarly, `sep_cols` are identified for columns.
+3. **Conditional Coloring**: The code iterates through the grid and modifies only the empty (`0`) cells within the identified bounding box area:
+   - **Red (2)**: Applied to cells that are located at the intersection of a separator row and a separator column, or if a cell falls in a separator row *and* inside the column bounds (or vice versa).
+   - **Blue (1)**: Applied to cells that are strictly within a separator row or separator column, but do not meet the criteria for red.
+
+### Transformation Rules
+- The transformation essentially fills the cross-sections of the grid delineated by the grey pixels.
+- Any empty space within the bounding box is filled with either `1` or `2`, effectively creating a grid pattern or a 'cross' look within the original bounds established by the color 5 pixels.
+- The logic assumes that the input structure provides a frame, and the empty space inside that frame is filled using a deterministic priority based on column/row intersections.
