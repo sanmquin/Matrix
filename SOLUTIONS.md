@@ -791,3 +791,33 @@ The ARC task 1a6449f1 involves identifying rectangular frames of the same color 
 ### Pattern Recognition
 - **Color Consistency**: The algorithm relies on the fact that the border of the target rectangle is uniform in color.
 - **Structural Geometry**: By grouping segments by their horizontal bounds, the algorithm efficiently narrows down potential candidates for rectangles without needing to perform a full-grid scan for every pixel combination.
+
+
+## Task 1acc24af
+
+### Strategy Overview
+The task 1acc24af involves identifying 'rooms' (enclosed areas of 0s) and 'blobs' (connected components of 5s) within a grid containing a structured barrier (1s). The goal is to recolor blobs to 2 if they geometrically 'match' a specific room, following a set of strict orientation and inclusion rules.
+
+### Key Steps and Logic
+1. **Room Identification (`_find_rooms`)**:
+   - The code locates a 'cross row' (a row consisting of 1s at both edges). 
+   - It identifies rooms as 4-connected components of 0s reachable from the gaps in this cross-row barrier.
+
+2. **Blob Segmentation (`_connected_components`)**:
+   - The code identifies all connected groups of 5s on the grid to treat them as individual objects (blobs).
+
+3. **Matching Logic (`_matches_room`)**:
+   - Each blob is compared against every room using specific transformation rules:
+     - **Orientations**: The logic uses three orientations (0°, 90°CW, and 180°). The 270° orientation is omitted to prevent chiral shapes (like L-shapes) from being incorrectly matched against their mirror-image rooms.
+     - **Containment**: 
+       - For non-linear shapes: A blob matches if it equals the room or contains the room in one of the three allowed orientations while having a larger bounding box.
+       - For linear shapes (pure rows or columns): A blob matches if it is a single line segment containing the room as a sub-run.
+
+4. **Transformation**:
+   - If a blob meets the matching criteria for *any* room, all cells belonging to that blob are updated from 5 to 2 in the output grid.
+
+### Utility Functions
+- `_normalize`: Shifts shapes so they originate at (0,0) to facilitate geometric comparison regardless of grid position.
+- `_rotate90cw`: Rotates a shape 90 degrees clockwise for the orientation testing phase.
+- `_contains_subgraph`: Determines if a shape fits inside another using bounding box offsets.
+- `_bbox`: Calculates the rectangular dimensions of a shape, used to verify size constraints during matching.
