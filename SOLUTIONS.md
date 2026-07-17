@@ -402,3 +402,23 @@ The goal of task 103eff5b is to map a source pattern of colored pixels (excludin
 - **Pattern Rotation**: The 90-degree clockwise rotation is a mandatory geometric constraint of the transformation.
 - **Block Replication**: The transformation treats the rotated key as a 'low-resolution' template. Each cell in that template is expanded into a larger block within the target area defined by the 8s.
 - **Bounding Box Logic**: The solution relies on calculating the precise boundaries of both the source pattern and the target 8-frame to determine the scale of the mapping process.
+
+
+## Task 11e1fe23
+
+### Strategy Summary
+The task 11e1fe23 involves identifying three colored pixels (non-zero) on a background and rearranging them to form a compact triangular pattern centered around a new anchor point. The logic relies on finding a geometric center that is equidistant from the three original points, placing a gray (5) pixel at that center, and shifting the original colored pixels one step closer to that center.
+
+### Core Steps
+1. **Identify Points**: The code first scans the input grid to locate all non-zero pixels, storing their coordinates and values.
+2. **Geometric Center Calculation**: 
+   - The algorithm iterates through pairs of the identified points to find a potential midpoint.
+   - It checks the **Chebyshev distance** (the maximum of the horizontal and vertical differences) from this midpoint to all three points.
+   - It validates the center by ensuring that all three points are equidistant from it. This defines the 'center' of the equilateral-like arrangement.
+3. **Transformation**:
+   - **Anchor Placement**: A pixel of color 5 (gray) is placed at the calculated center coordinate.
+   - **Repositioning**: Each original colored pixel is moved one unit step closer to the center coordinate. The direction of the move is determined by the sign of the difference between the original pixel coordinate and the center coordinate (`dr` and `dc` are calculated as -1, 0, or 1).
+
+### Key Patterns
+- The transformation essentially 'collapses' the scattered colored points toward a central point while adding a specific marker (color 5) at the core.
+- The use of Chebyshev distance is crucial here because the grid movement occurs in 8 possible directions (horizontal, vertical, and diagonal), which is the geometric property defined by the Chebyshev distance.
