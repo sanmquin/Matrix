@@ -939,3 +939,23 @@ The ARC task 1da012fc involves mapping geometric shapes found in the grid to spe
 - **Relative Positioning:** The core insight is that the spatial configuration of the colored dots *mirrors* the spatial configuration of the external shapes. Even if the scales differ, the relative 'layout' is preserved.
 - **Normalization:** By scaling the positions of both the dots and the shapes to a 0-1 range, the code makes the matching process robust to differences in the total grid size or the spread of elements.
 - **Transformation:** The final transformation involves flood-filling or replacing the pixels of each identified shape with the color mapped from its corresponding dot.
+
+
+## Task 1e81d6f9
+
+### Logic Summary
+The puzzle involves identifying a small 'template' region in the top-left corner of the grid, which is delineated by a boundary of color `5` (gray). Within this template, there is a specific 'key color' (a non-zero, non-5 value). The transformation rule is to clear all occurrences of that identified 'key color' from the grid, *except* for those that are located inside the designated template box.
+
+### Core Steps
+1. **Boundary Detection**: 
+   - The code scans the grid to locate a boundary of `5`s. Specifically, it searches for a row and a column composed of `5`s that define the lower and right edges of a small rectangular region at the top-left of the grid.
+2. **Template Identification**:
+   - It identifies the `box_row` and `box_col` indices that define the dimensions of this template area.
+3. **Key Color Extraction**:
+   - It iterates through the contents of the template region (the area above and to the left of the `5` boundary) to find the unique color that is neither `0` (black/background) nor `5` (boundary). This color is designated as the `key_color`.
+4. **Transformation (Cleaning)**:
+   - It performs a final pass over the entire grid. If a cell contains the `key_color` and lies *outside* the boundaries of the identified template, it is set to `0` (removed). If the cell lies inside the template, it remains unchanged.
+
+### Key Observations
+- **Spatial Filtering**: The solution relies on the relative position (coordinate comparison) to determine whether an object should be removed.
+- **Pattern Recognition**: The `5` (gray) pixels act as a structural anchor, effectively creating a 'protected zone' in the input grid. This allows the system to distinguish between 'instances' of a color that should be kept and 'instances' that are noise to be eliminated.
