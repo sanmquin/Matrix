@@ -657,3 +657,22 @@ The lookup table defines the following relationships:
 * **Top row** ((5,5,5), (0,0,0), (0,0,0)) → **Color 6 (Magenta)**
 
 This approach transforms a shape-based puzzle into a classification problem, where the spatial arrangement within discrete blocks dictates the final color fill of those blocks.
+
+
+## Task 18419cfa
+
+### Logic Overview
+The ARC task 18419cfa involves identifying enclosed regions within a boundary made of color '8' (teal). Inside these boundaries, there are patterns composed of color '2' (red). The goal is to reflect the '2' pixels across the geometric center of the interior region. The direction of the reflection (horizontal vs. vertical) is determined by the alignment of the existing '2' pixels relative to the region's center.
+
+### Key Steps
+1. **Exterior Masking**: The algorithm first identifies the 'exterior' of the grid using a Breadth-First Search (BFS) starting from the grid boundaries. Any non-8 cells reachable from the outside are considered exterior and are ignored.
+2. **Region Segmentation**: After excluding the exterior and the '8' borders, the remaining cells form isolated interior regions. These are grouped into distinct sets using a connected-components traversal.
+3. **Reflection Analysis**:
+   - For each region, the algorithm calculates the bounding box and determines the geometric center (`center_r`, `center_c`).
+   - It computes the center of mass of the existing '2' pixels (`avg_r`, `avg_c`).
+   - **Determining Axis**: If the '2' pixels are offset more horizontally than vertically relative to the center, the transformation performs a horizontal reflection. Otherwise, it performs a vertical reflection.
+4. **Transformation**: The existing '2' pixels are mirrored across the center of the region. The result is updated by filling in the reflected positions with the value '2', provided the target coordinates remain within the bounds of that specific region.
+
+### Pattern Rules
+- **8-Border**: Serves as a container, separating the interior space from the exterior.
+- **Symmetry**: The transformation relies on the symmetry of the interior region. By finding the center of the region's bounding box, the code effectively flips the existing '2' shape to create a symmetric pattern within the enclosure.
