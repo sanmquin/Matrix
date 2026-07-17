@@ -573,3 +573,26 @@ The task involves identifying a 6x6 pattern defined by a colored shape (the 'tem
 * **Template Extraction**: The 2x2 to 3x3 mapping acts as a downsampling/feature extraction step to simplify complex shapes into a binary mask.
 * **Conditional Application**: The logic ensures the original source box is not overwritten by skipping the `box_crs` and `box_ccs` quadrants.
 * **Implicit Rules**: The background is assumed to be composed of '1's, which are used as placeholders to be replaced by the target color only where the template structure matches.
+
+
+## Task 15663ba9
+
+### Strategy Summary
+The task 15663ba9 requires identifying and coloring specific vertices (corners) of non-zero shapes within a grid. The solution distinguishes between **convex (outer)** corners and **concave (inner)** corners based on their spatial orientation relative to the shape's interior and the surrounding background.
+
+### Key Components and Logic
+
+1. **Flood Fill (Exterior Identification):**
+   - The code first identifies all '0' (background) cells that are connected to the grid boundary. This differentiates the "outside" of the grid from any "holes" inside a shape. It uses a queue-based Breadth-First Search (BFS) starting from the border.
+
+2. **Corner Detection:**
+   - It iterates through every non-zero cell and checks if it is a corner by looking at its 4-connected neighbors. A cell is a potential corner if it has exactly two non-zero neighbors that are perpendicular to each other.
+
+3. **Classification of Corners:**
+   - **Convex (Outer) Corners:** If the diagonal cell (the one completing the square of the corner) is empty (0) and is *not* part of the exterior (meaning it is a hole inside the object or the space is constrained), the corner is marked with color **4**.
+   - **Concave (Inner) Corners:** If the diagonal cell is occupied (non-zero) or lies outside the grid boundaries, the corner is marked with color **2**.
+
+### Transformation Rules
+- **Rule 1:** Only cells forming a 90-degree angle (L-junction) are processed.
+- **Rule 2:** Background color '0' acts as a reference point to differentiate between an "outer edge" of a shape and an "inner indentation."
+- **Rule 3:** The result preserves the original grid structure, only updating the values of the identified corner pixels.
