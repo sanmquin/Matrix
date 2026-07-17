@@ -439,3 +439,21 @@ The task requires completing a grid by identifying a repeating pattern (a 'templ
 * **Anchor Rows**: Rows containing the digit `5` serve as the source of truth for the pattern.
 * **Cyclical Repetition**: The transformation assumes a vertical repetition logic. Once the 'empty' space is reached, the pattern repeats vertically until the grid boundaries are met.
 * **Background Handling**: The value `5` acts as a marker/indicator in the input but is treated as empty space (`0`) in the generated output, allowing for seamless integration of the pattern into the rest of the grid.
+
+
+## Task 12997ef3
+
+### Logic Overview
+The solution for ARC task 12997ef3 identifies a 'template' pattern defined by cells with a value of `1` and reproduces this pattern across a new grid, coloring each instance according to colored markers (non-0, non-1 values) provided in the input grid. The spatial arrangement of these markers dictates whether the template copies are tiled horizontally or stacked vertically.
+
+### Core Steps
+1. **Identify the Template**: The code scans the input grid to locate all cells containing `1`. It extracts the minimal bounding box containing these ones to create a binary mask (`template`).
+2. **Identify Color Markers**: It scans the input for any cells containing values other than `0` or `1`. These act as both placeholders for the template and indicators for the color to be used for that specific template instance.
+3. **Determine Layout Logic**:
+   - **Horizontal Tiling**: If all identified color markers share the same row, the algorithm assumes a horizontal layout. It sorts the markers by their column index and constructs a new wide grid where each template is placed side-by-side, filled with the marker's color.
+   - **Vertical Stacking**: If the color markers share the same column, the algorithm assumes a vertical layout. It sorts the markers by their row index and constructs a new tall grid by stacking the colored templates on top of one another.
+
+### Helper Functions & Patterns
+- **Mask Extraction**: The `template` is essentially a local coordinate map of the `1`s, normalized to the top-left of the bounding box.
+- **Conditional Construction**: The final result grid is constructed by iterating through either the ordered row or column markers. For each marker, it maps the `template` mask onto the final grid, replacing `1`s with the marker's color value and leaving other cells as `0`.
+- **Pattern Recognition**: The solution relies on the inherent geometry of the input: if markers are aligned horizontally, the output is a single-row composite; if aligned vertically, it is a single-column composite.
