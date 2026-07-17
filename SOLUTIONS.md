@@ -738,3 +738,22 @@ The solution for ARC task 1990f7a8 identifies four distinct 3x3 objects within a
    - Bottom-Right: `(4, 4)`
 
 This specific placement ensures that the 3x3 patches occupy the corners of the 7x7 grid, naturally forming a cross-shaped empty separator of 0s at index 3 of the rows and columns.
+
+
+## Task 19bb5feb
+
+### Logic Summary
+The puzzle involves identifying 2x2 blocks of specific colors embedded within a grid that also contains a large 'anchor' shape (the color 8). The solution maps the relative spatial positions of these colored blocks into a simplified 2x2 output grid based on their location relative to the center of the anchor shape.
+
+### Key Steps and Transformations
+1. **Identify the Anchor**: The algorithm first calculates the bounding box of the color 8 (azure) to find its geometric center (`center_r`, `center_c`). This acts as the reference point for the grid.
+2. **Detect Colored 2x2 Blocks**: It scans the input grid for 2x2 squares where all cells contain the same non-zero, non-eight color. Once a block is found, it records its color and the center coordinates of that 2x2 block.
+3. **Quadrant Mapping**: 
+   - The center of the grid (defined by the anchor) divides the space into four quadrants.
+   - For each detected color, the algorithm determines which quadrant its 2x2 block occupies relative to the anchor's center.
+   - It assigns the color to the corresponding cell in a 2x2 result grid (top-left, top-right, bottom-left, or bottom-right).
+
+### Patterns and Rules
+- **Spatial Relation**: The core rule is that the position of a 2x2 block in the original grid dictates its index in the final 2x2 matrix.
+- **Filtering**: Only solid 2x2 blocks of a single color are considered. Background noise (0) and the anchor (8) are ignored during the block-detection phase.
+- **Normalization**: By using the center of the anchor shape as a reference, the solution is invariant to the specific size or precise location of the anchor, provided the quadrants remain distinct.
