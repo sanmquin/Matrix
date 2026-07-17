@@ -843,3 +843,99 @@ The task involves processing a grid containing a central gray (color 5) rectangu
 - **Marker Mapping**: Uses coordinate comparison (`r < r_min` or `c < c_min`, etc.) to distinguish between which marker defines the row boundary and which defines the column boundary.
 - **Quadrant Assignment**: Uses conditional logic (`if cr == r_min and cc == c_min`) to handle the geometric transformation of the rectangle, ensuring that only the relevant portion is filled with the target color.
 - **Filling**: Performs a nested loop iteration over the derived ranges `range(rs, re + 1)` and `range(cs, ce + 1)` to apply the color.
+
+
+## Task 1c0d0a4b
+
+### Logic Summary
+The puzzle involves identifying a grid partitioned into smaller sub-blocks by rows and columns consisting entirely of zeros. The transformation rule applied to each sub-block is a color inversion: cells containing the value `8` (azure) are converted to `0` (black), while existing `0` cells are converted to `2` (red).
+
+### Key Steps
+1. **Identify Separators**: The code identifies rows and columns composed entirely of zeros (`sep_rows` and `sep_cols`). These lines function as a grid structure or 'frame'.
+2. **Iterate through Sub-blocks**: By iterating through the indices of the separator lists, the code isolates the rectangular regions bounded by these zeros.
+3. **Apply Inversion Logic**: For every cell inside a detected sub-block:
+   - If the original value is `8`, it is mapped to `0` in the output grid.
+   - If the original value is `0`, it is mapped to `2` in the output grid.
+4. **Preserve Borders**: The separator rows and columns are explicitly initialized as `0` in the output grid (based on the `[[0]*cols for _ in range(rows)]` initialization) and are never modified by the sub-block processing loops, effectively maintaining the frame.
+
+### Grid Transformations
+- **Pattern**: The grid is treated as a segmented map where the background (`0`) acts as a structural separator.
+- **Mapping**: The transformation follows a specific substitution rule: `8 -> 0` and `0 -> 2` within the bounded windows.
+
+
+## Task 1c56ad9f
+
+### Strategy Summary
+The task involves applying a deterministic horizontal shift (a 'shear' or 'zigzag' effect) to non-zero colored pixels within a grid. The transformation shifts pixels left or right based on their vertical position, following a repeating cycle. The cycle pattern is designed to ensure the resulting shape is horizontally displaced in a specific wave-like motion.
+
+### Core Logic and Steps
+1. **Identify the Bounding Box:** The algorithm first calculates the `min_r` and `max_r` of the non-zero colored pixels. This defines the vertical range of the transformation.
+2. **Define the Transformation Pattern:** 
+   - The shift pattern follows a 4-step cycle: `[0, -1, 0, 1]`.
+   - This corresponds to: No shift, Shift Left, No shift, Shift Right.
+3. **Alignment Phase:** 
+   - The code calculates a `start` variable based on the height (`n`) of the non-zero region: `start = (3 - n) % 4`. This ensures that the sequence of shifts is consistently applied relative to the span of the object, aligning the output correctly with the ground truth examples.
+4. **Transformation:**
+   - The grid is iterated row by row within the bounding box.
+   - For each row, an `offset` is determined using the index in the cycle: `cycle[(r - min_r + start) % 4]`.
+   - Every non-zero pixel in the row is moved by this `offset` horizontally, provided the new column index stays within the original grid boundaries.
+
+### Key Observations
+- **Relative Motion:** The puzzle treats the non-zero pixels as a collective object that 'wobbles' as you move down the rows.
+- **Constraint Handling:** The solution assumes the image width remains constant and only shifts pixels within the defined vertical range. The modulo arithmetic ensures the cyclic behavior repeats regardless of the specific height of the object.
+
+
+## Task 1d0a4b61
+
+### Strategy Summary
+The ARC task 1d0a4b61 involves completing a pattern where a grid contains sparse, non-zero colored pixels that appear to be part of a repeating tiling structure. The solution identifies the fundamental repeating unit (a 'template') by discovering the smallest horizontal and vertical periods and then reconstructs the full grid by tiling this template.
+
+### Key Helper Functions
+1. `find_period_h()`: Searches for the smallest horizontal offset `p` such that for every row, any two cells separated by `p` either contain the same non-zero value or contain at least one zero (empty) cell. This defines the width of the repeating tile.
+2. `find_period_v()`: Performs the same logic as the horizontal search but iterates over column offsets, determining the height of the repeating tile.
+
+### Core Steps
+1. **Period Detection**: The code iterates through possible horizontal and vertical periods. By checking that non-zero values do not conflict (i.e., they are consistent across the grid according to the period), it identifies the grid's underlying cycle.
+2. **Template Extraction**: Once the dimensions (`hp` and `vp`) are found, the code initializes a `vp x hp` template grid. It iterates through the input grid, placing every non-zero cell `grid[r][c]` into its relative position within the template using modulo arithmetic: `template[r % vp][c % hp] = grid[r][c]`.
+3. **Grid Reconstruction**: The final grid is generated by iterating through the original grid dimensions and filling each cell `(r, c)` with the value from `template[r % vp][c % hp]`. This effectively fills in the gaps where the original input had zeros, based on the identified pattern logic.
+
+
+## Task 1d398264
+
+### Strategy Overview
+The task requires identifying a 3x3 pattern embedded in a larger grid and 'projecting' or extending the values of this pattern along cardinal and diagonal axes until they reach the boundaries of the grid. The central cell of the 3x3 block acts as the origin point for these projections.
+
+### Core Logic
+1. **Pattern Extraction**: The code scans the input grid to locate the top-left corner of the first 3x3 non-zero block found. It then stores this 3x3 template in memory.
+2. **Cardinal Projections**: 
+   - The **middle row** of the 3x3 block is extended horizontally: the leftmost cell value fills the entire row to the left, and the rightmost cell value fills the entire row to the right.
+   - The **middle column** of the 3x3 block is extended vertically: the top cell value fills the entire column upwards, and the bottom cell value fills the entire column downwards.
+3. **Diagonal Projections**:
+   - The four corners of the 3x3 block are used as seeds for diagonal rays extending toward the corners of the main grid.
+   - Each corner (top-left, top-right, bottom-left, bottom-right) is projected along its respective diagonal vector (e.g., $(-1, -1)$ for top-left) until it hits the boundary of the grid.
+4. **Restoration**: The original center value of the 3x3 block is explicitly re-assigned at the end to ensure it is not overwritten by any projection logic.
+
+### Key Transformations
+- **Anchor Point**: The center of the 3x3 block $(cr, cc)$ serves as the intersection point for the horizontal and vertical lines.
+- **Projection Logic**: Simple `while` loops are used for the diagonals to decrement/increment coordinates until they exit grid bounds. Simple `for` loops are used for the cardinal lines to fill to the edge of the grid.
+- **Boundary Handling**: The algorithm effectively transforms the localized 3x3 information into a sparse grid where the input block serves as a 'source' for filling the grid's empty or background space.
+
+
+## Task 1da012fc
+
+### Logic Overview
+The ARC task 1da012fc involves mapping geometric shapes found in the grid to specific colors based on their relative positioning. The strategy uses a 'palette' (a bounding box defined by cells with value 5) to identify colored dots, and then applies a spatial normalization technique to match disconnected shapes outside the palette to these dots.
+
+### Core Steps
+1. **Identify the Palette:** The algorithm first finds the bounding box formed by all cells with the value `5`. This defines a region of reference.
+2. **Extract Dots:** Within the palette area, the code identifies non-zero, non-five colored cells and records their relative coordinates (normalized between 0 and 1) along with their color.
+3. **Identify External Shapes:** Using Breadth-First Search (BFS), the algorithm isolates connected components (shapes) of non-zero, non-five colored pixels that exist outside the palette region.
+4. **Spatial Normalization:** To correlate the shapes to the dots, both sets of items are mapped into a normalized coordinate system:
+   - Dots are normalized relative to the palette dimensions.
+   - Shapes are normalized relative to the bounding box containing all shape centers.
+5. **Mapping and Coloring:** The algorithm calculates the Euclidean distance between each normalized shape center and each normalized dot position. Each shape is assigned the color of its nearest neighbor in the normalized coordinate space.
+
+### Patterns and Transformations
+- **Relative Positioning:** The core insight is that the spatial configuration of the colored dots *mirrors* the spatial configuration of the external shapes. Even if the scales differ, the relative 'layout' is preserved.
+- **Normalization:** By scaling the positions of both the dots and the shapes to a 0-1 range, the code makes the matching process robust to differences in the total grid size or the spread of elements.
+- **Transformation:** The final transformation involves flood-filling or replacing the pixels of each identified shape with the color mapped from its corresponding dot.
