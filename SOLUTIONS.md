@@ -843,3 +843,21 @@ The task involves processing a grid containing a central gray (color 5) rectangu
 - **Marker Mapping**: Uses coordinate comparison (`r < r_min` or `c < c_min`, etc.) to distinguish between which marker defines the row boundary and which defines the column boundary.
 - **Quadrant Assignment**: Uses conditional logic (`if cr == r_min and cc == c_min`) to handle the geometric transformation of the rectangle, ensuring that only the relevant portion is filled with the target color.
 - **Filling**: Performs a nested loop iteration over the derived ranges `range(rs, re + 1)` and `range(cs, ce + 1)` to apply the color.
+
+
+## Task 1c0d0a4b
+
+### Logic Summary
+The puzzle involves identifying a grid partitioned into smaller sub-blocks by rows and columns consisting entirely of zeros. The transformation rule applied to each sub-block is a color inversion: cells containing the value `8` (azure) are converted to `0` (black), while existing `0` cells are converted to `2` (red).
+
+### Key Steps
+1. **Identify Separators**: The code identifies rows and columns composed entirely of zeros (`sep_rows` and `sep_cols`). These lines function as a grid structure or 'frame'.
+2. **Iterate through Sub-blocks**: By iterating through the indices of the separator lists, the code isolates the rectangular regions bounded by these zeros.
+3. **Apply Inversion Logic**: For every cell inside a detected sub-block:
+   - If the original value is `8`, it is mapped to `0` in the output grid.
+   - If the original value is `0`, it is mapped to `2` in the output grid.
+4. **Preserve Borders**: The separator rows and columns are explicitly initialized as `0` in the output grid (based on the `[[0]*cols for _ in range(rows)]` initialization) and are never modified by the sub-block processing loops, effectively maintaining the frame.
+
+### Grid Transformations
+- **Pattern**: The grid is treated as a segmented map where the background (`0`) acts as a structural separator.
+- **Mapping**: The transformation follows a specific substitution rule: `8 -> 0` and `0 -> 2` within the bounded windows.
