@@ -1196,3 +1196,25 @@ Task 2685904e involves generating a pattern based on frequency analysis of a spe
 * **Input Structure**: The grid relies on row 0 to set a length constraint, a row of `5`s acting as a visual separator, and row 8 acting as a data source.
 * **Filter Rule**: The logic implements a "frequency match" rule: `Output_Value = Palette_Value` if `Count(Palette_Value) == Count(8 in Row 0)`, else `0`.
 * **Placement**: The transformation happens specifically in the rows above the separator, effectively filling the space between the top section and the separator with the calculated pattern.
+
+
+## Task 2697da3f
+
+### Logic Summary
+The core strategy for task 2697da3f is to identify a singular non-zero pattern (an object) within an input grid, extract its tight bounding box, and arrange four rotated versions of this pattern into a symmetrical 'cross' configuration on a new, larger grid.
+
+### Key Steps & Transformations
+1. **Bounding Box Extraction:** The code locates the non-zero pixels in the input grid to determine the exact rectangular bounds of the 'shape.' This effectively ignores the background padding.
+2. **Shape Isolation:** The shape is extracted into a sub-matrix of dimensions $H \times W$ (height $H$, width $W$).
+3. **Rotations:** The solution defines three helper functions (`rot90cw`, `rot180`, `rot270cw`) to generate the three required orientations of the shape based on the original.
+4. **Grid Construction:** A new square output grid is initialized with size $S = 2W + H$. This ensures enough space to arrange the four rotations without overlap while maintaining a balanced, cross-like layout.
+5. **Arrangement (Cross Pattern):** The four versions are placed in a specific coordinate order:
+   - **Left:** Original shape placed at $(W, 0)$.
+   - **Top:** 90° clockwise rotated shape placed at $(0, W)$.
+   - **Right:** 180° rotated shape placed at $(W, W+H)$.
+   - **Bottom:** 270° clockwise rotated shape placed at $(W+H, W)$.
+
+### Patterns and Rules
+- **Symmetry:** The puzzle is essentially a transformation task that expands a single object into a four-way rotational symmetry pattern.
+- **Coordinate Offsets:** The placement offsets use $W$ and $H$ as units, effectively 'hinging' the rotations around a central blank space defined by the dimensions of the original object.
+- **Sparse Matrix handling:** The logic explicitly uses `if v != 0` during placement to ensure that the background (represented as 0) does not overwrite existing pixels in the output grid, effectively overlaying the pattern rotations.
