@@ -1023,3 +1023,22 @@ The solution for task 20818e16 identifies individual colored shapes within the i
 
 ### Pattern Recognition
 This approach assumes that the puzzle requires extracting all colored objects from a cluttered input and representing them as a stack or collection of filled rectangles of their respective detected sizes.
+
+
+## Task 20981f0e
+
+### Strategy Overview
+The task 20981f0e involves partitioning an input grid into smaller rectangular sub-grids using 'separator' lines (identified by the value `2`). The goal is to isolate existing colored patterns (represented by the value `1`) within these sub-grids and re-center them perfectly within their respective bounded regions.
+
+### Key Logic and Steps
+1. **Boundary Identification**: The code identifies all rows and columns that contain at least one `2`. These rows and columns act as barriers, effectively segmenting the grid into a set of disjoint rectangular cells.
+2. **Grid Segmentation**: By adding virtual boundaries at `-1`, the identified `2`-lines, and the grid edges, the code creates a collection of sub-grids defined by `(row_bounds[ri] + 1, row_bounds[ri + 1])` and `(col_bounds[ci] + 1, col_bounds[ci + 1])`.
+3. **Pattern Extraction**: For every defined sub-grid, the algorithm scans for pixels containing the value `1`. It computes the relative bounding box (height and width) of the shape formed by these pixels.
+4. **Centering Transformation**:
+   - It calculates the dimensions of the sub-grid (`H` x `W`) and the dimensions of the shape (`h` x `w`).
+   - It computes the offsets `new_top = (H - h) // 2` and `new_left = (W - w) // 2` to determine the centered position of the shape within the current sub-grid.
+   - It clears the original pixels and redraws the shape in the new calculated coordinates within the output grid.
+5. **Reconstruction**: The original `2` separators are preserved in their original positions in the output grid, while all non-separator regions are cleared and repopulated with the centered shapes.
+
+### Transformation Summary
+This puzzle is a geometric normalization task. It decomposes the grid based on structural separators and applies a translation to each isolated component to align it to the center of its local partition.
