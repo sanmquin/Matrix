@@ -1426,3 +1426,23 @@ The ARC task 2c737e39 involves identifying a primary structure (a connected grou
 - The transformation assumes a translation-based logic: find the marker ('5') in the object and shift the entire object so that the marker overlaps with the destination coordinates.
 - The 'lone 5' effectively acts as a ghost or target position; it is consumed/overwritten during the alignment process.
 - The solution preserves the colors of the main pattern while ignoring the background (0) and the original '5' position.
+
+
+## Task 2f0c5170
+
+### Strategy Summary
+The goal of task 2f0c5170 is to identify a 'template' pattern (containing color 4) and a 'target' region (containing a single colored marker), and then overlay the template onto the target such that the colored markers in both align perfectly. The regions are separated by a border of 8s.
+
+### Key Helper Functions
+*   `find_rectangular_regions(grid)`: Scans the input grid for blocks of non-8 integers. It determines the bounds of these rectangles, extracts them as sub-grids, and ignores the 8s (which act as separators).
+
+### Core Logic
+1.  **Region Categorization**: The solver iterates through the identified rectangles. It classifies them into:
+    *   **Target Region**: A region containing exactly one unique color (the marker).
+    *   **Pattern Region**: A region containing the color 4 (the drawing) and the same colored marker found in the target region.
+2.  **Alignment**: Once the regions are identified, the solver locates the (r, c) coordinates of the shared `marker_color` within both the `target_region` and the `pattern_region`.
+3.  **Transformation (Overlay)**:
+    *   Calculate an `offset` (difference in marker coordinates) to determine how to shift the pattern to fit the target.
+    *   Create a copy of the target region as the base for the final output.
+    *   Iterate through the pattern region and map its cells onto the target grid, adjusted by the calculated offset.
+    *   Non-zero values in the pattern region overwrite the corresponding cells in the target grid, effectively 'stamping' the pattern onto the target at the correct anchor point.
