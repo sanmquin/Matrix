@@ -1309,3 +1309,30 @@ This solution identifies rectangular frames (made of 1s) within a grid, fills th
 4. **Transformation Steps:**
     * **Internal Fill:** All cells inside the bounding box are set to 2.
     * **Gap Filling and Beam Projection:** Each identified gap is set to 2. From each gap, a 'beam' of 2s is extended outward in the direction perpendicular to the edge (e.g., a top gap extends upward). The beam continues until it either hits a non-background cell (a 1) or reaches the edge of the grid.
+
+
+## Task 29700607
+
+### Strategy Overview
+The goal of this task is to complete the grid by propagating colors defined in the first row. The first row contains a specific sequence of non-zero colors that act as a 'template'. The algorithm identifies this template, maps individual colors to their respective columns, and propagates them horizontally based on the positions of 'isolated' instances found in the lower rows. Finally, it conditionally extends the middle column downward.
+
+### Core Logic and Steps
+
+1. **Pattern Extraction**: The code scans the first row of the grid to extract a sequence of non-zero colored pixels. This sequence is treated as the master template.
+
+2. **Identification of Isolated Instances**: The code scans the remaining rows to find where any of the colors from the master template appear outside of their designated columns. These are stored in an `isolated` dictionary, mapping each color to its coordinates `(row, col)`.
+
+3. **Pattern Replication**: It initializes the grid by copying the master template into all rows up to the deepest row where an isolated instance was found.
+
+4. **Horizontal Extension**: For every isolated instance:
+   - It identifies the column the color 'belongs' to based on the template.
+   - It fills the row horizontally between the isolated position and the template column position, effectively creating a line of that color connecting the isolated pixel to the template structure.
+
+5. **Cleanup**: It clears the template column entries for specific colors in rows following the first time an isolated instance appeared, ensuring that the isolated structure remains the dominant feature for that color.
+
+6. **Middle Column Extension**: It identifies the center-most color of the template. If this specific color was *not* found as an isolated instance elsewhere, the algorithm performs a vertical fill, extending that color downward to the bottom of the grid in its designated template column.
+
+### Key Transformations
+- **Pattern-to-Grid Mapping**: The logic treats the first row as the anchor for a set of vertical 'tracks'.
+- **Horizontal Propagation**: It treats isolated colored pixels as starting points or endpoints that force a horizontal connection to the 'track' belonging to that color.
+- **Conditional Vertical Fill**: The strategy treats the middle element as a special structural pillar that is only extended if it remains 'undisturbed' (i.e., it doesn't have isolated instances elsewhere).
