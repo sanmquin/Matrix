@@ -1336,3 +1336,24 @@ The goal of this task is to complete the grid by propagating colors defined in t
 - **Pattern-to-Grid Mapping**: The logic treats the first row as the anchor for a set of vertical 'tracks'.
 - **Horizontal Propagation**: It treats isolated colored pixels as starting points or endpoints that force a horizontal connection to the 'track' belonging to that color.
 - **Conditional Vertical Fill**: The strategy treats the middle element as a special structural pillar that is only extended if it remains 'undisturbed' (i.e., it doesn't have isolated instances elsewhere).
+
+
+## Task 2a5f8217
+
+### Strategy Overview
+The task requires identifying distinct connected shapes within the grid, where some shapes consist of color `1` (blue) and others consist of various other colors. The core logic is to treat the shapes made of color `1` as 'placeholders' that need to be colorized. By matching the geometric structure of these placeholder shapes to the structure of the existing non-1 colored shapes, we can determine the correct color for each placeholder.
+
+### Core Steps
+1. **Segmentation (Flood Fill):** The grid is traversed to find all connected components (contiguous blocks of the same color). A `flood_fill` helper function collects all coordinate pairs `(r, c)` for each component.
+2. **Normalization:** Since shapes can appear anywhere on the grid, they must be compared based on their relative geometry, not their absolute position. The `normalize` function translates each shape so that its top-leftmost coordinate starts at `(0, 0)`, returning a `frozenset` of relative coordinates.
+3. **Classification:** 
+   - Shapes made of color `1` are stored as placeholders.
+   - Shapes made of other colors are stored in a mapping dictionary (`color_shapes`) where the normalized structure is the key and the specific color is the value.
+4. **Transformation:** The code iterates through the placeholder shapes. For each placeholder, it checks if its normalized structure exists in the `color_shapes` map. If found, all cells belonging to that placeholder in the result grid are updated to the color identified from the map.
+
+### Key Helpers
+- **`flood_fill(r, c, color)`**: Uses a stack-based traversal to explore connected nodes, ensuring no node is visited twice and grouping them into objects representing a singular shape.
+- **`normalize(cells)`**: Subtracts the minimum row and column indices from every coordinate in a shape to create a local coordinate system, allowing for geometry-based comparison regardless of the shape's original location.
+
+### Pattern Recognition
+- The solution relies on the invariant that every shape of color `1` is a geometric duplicate of a uniquely colored shape elsewhere in the grid. By mapping the 'blueprint' (geometry) to a 'fill' (color), the transformation is completed algorithmically.
