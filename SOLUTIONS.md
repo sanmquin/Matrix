@@ -1114,3 +1114,21 @@ The solution identifies contiguous horizontal bands of identical rows and applie
 - The transformation acts as a filter that selectively recolors elements based on the vertical periodicity of the row patterns.
 - Non-zero values act as 'foreground' elements that are recolored, while `0` (background) values remain unchanged.
 - The pattern relies on the input having a structure where rows repeat, allowing the logic to segment the image into 'blocks' to be processed independently.
+
+
+## Task 25094a63
+
+### Overview
+The task 25094a63 involves identifying monochromatic rectangular regions within a grid that meet specific size criteria and modifying their internal contents. Specifically, the solution identifies maximal rectangular blocks of a single color that have both a width and height of at least 4 cells and changes the color of those regions to color 4 (yellow).
+
+### Core Logic
+1. **Identify Candidates**: The algorithm iterates through every unique color present in the grid.
+2. **Rectangle Detection**: For each color, it searches for rectangular sub-grids where every cell within the rectangle `(r1, c1)` to `(r2, c2)` matches the current color, and the dimensions satisfy `(r2 - r1 + 1) >= 4` and `(c2 - c1 + 1) >= 4`.
+3. **Maximality Check**: A crucial step is verifying that the detected rectangle is 'maximal'. This means the rectangle cannot be extended in any of the four cardinal directions (up, down, left, right) while still maintaining the same color throughout.
+4. **Transformation**: If a region is confirmed to be a maximal rectangle of at least 4x4, all cells within that region are updated to color 4 in the result grid.
+
+### Key Steps
+- **Iteration**: The code uses nested loops to inspect all possible sub-rectangular regions of the grid.
+- **Constraint Checking**: The `all(...)` function is employed to ensure that every cell within the candidate rectangle shares the same color.
+- **Contiguity**: For column ranges, the code identifies 'contiguous runs' to define the width, ensuring it only considers valid adjacent columns that fulfill the color requirement.
+- **Boundary Conditions**: The `can_up`, `can_down`, `can_left`, and `can_right` boolean flags are calculated to ensure the rectangle is not just a sub-section of a larger block of the same color, fulfilling the 'maximal' requirement.
