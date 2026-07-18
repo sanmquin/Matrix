@@ -1357,3 +1357,21 @@ The task requires identifying distinct connected shapes within the grid, where s
 
 ### Pattern Recognition
 - The solution relies on the invariant that every shape of color `1` is a geometric duplicate of a uniquely colored shape elsewhere in the grid. By mapping the 'blueprint' (geometry) to a 'fill' (color), the transformation is completed algorithmically.
+
+
+## Task 2b01abd0
+
+### Logic Overview
+The solution for ARC task `2b01abd0` identifies a symmetry axis composed of blue (1) cells and performs a two-step operation: color swapping and reflection. The algorithm detects whether the axis is horizontal or vertical, swaps the colors of any non-background/non-axis objects (if two unique colors are present), and then mirrors the pattern across the blue line to complete the symmetric grid.
+
+### Core Steps
+1. **Axis Detection**: The code searches every row and column for a complete line of `1`s. This line acts as the mirror axis.
+2. **Color Swapping**: The code identifies all unique colored pixels (excluding `0` for background and `1` for the axis). If exactly two unique colors are found, it generates a mapping to swap them. This handles cases where the original input contains an inverted color scheme that needs normalization during the mirroring process.
+3. **Reflection Logic**:
+   - **Determination**: It checks which side of the axis (above/below or left/right) contains the existing pattern.
+   - **Mirroring**: Once the source side is identified, it calculates the mirror index relative to the axis (e.g., `mirror_r = 2 * line_row - r`). It then propagates the colored pixels from the source side to the empty target side across the axis.
+
+### Patterns and Transformations
+*   **Axis**: The grid is strictly divided by a continuous line of `1`s.
+*   **Reflection Strategy**: The transformation is essentially a reflection across the line of `1`s. If the pattern exists only on one side, it is reflected to the empty side.
+*   **Constraint Handling**: The use of `0` as a background allows the code to ignore empty spaces, ensuring only the intentional shapes (non-0, non-1 pixels) are processed during the mirroring transformation.
