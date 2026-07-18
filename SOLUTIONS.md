@@ -1526,3 +1526,24 @@ The goal of task 31adaf00 is to identify all maximal square regions consisting e
 ### Patterns and Rules
 - **Exclusivity:** A square only gets filled if it is the largest version of its kind in that specific location.
 - **Input/Output Constraints:** The transformation only affects regions of 0s; the 5s remain untouched, effectively acting as walls that define the boundaries of potential squares.
+
+
+## Task 31d5ba1a
+
+### Strategy Overview
+The task requires performing a bitwise XOR operation between two halves of an input grid. The input grid is vertically divided into two equal-sized sections (Top and Bottom). The goal is to produce an output grid where a cell contains the value '6' if exactly one of the corresponding cells in the top or bottom halves contains a non-zero value, and '0' otherwise.
+
+### Core Logic and Steps
+1. **Grid Partitioning**: The algorithm identifies the vertical midpoint (`half = len(grid) // 2`). This splits the grid into two sub-grids of identical dimensions.
+2. **Iterative Comparison**: The code iterates through each cell coordinate `(r, c)` within the dimensions of the top half.
+3. **Boolean Transformation**: For each cell, the algorithm converts the values into boolean states:
+    - `top_on`: `True` if `grid[r][c] != 0`
+    - `bot_on`: `True` if `grid[r + half][c] != 0`
+4. **XOR Operation**: The exclusive-OR operator (`^`) is applied to these boolean states. The result follows the logic:
+    - If exactly one cell is non-zero, the expression evaluates to `True`, resulting in a output value of `6`.
+    - If both are zero or both are non-zero, the expression evaluates to `False`, resulting in a output value of `0`.
+5. **Reconstruction**: The calculated values are assembled into a new grid of the same width as the input but half the height.
+
+### Rules Identified
+- **XOR Logic**: The puzzle treats the input as a pattern mask where the output highlights locations where the two halves differ in presence (one has a color, the other is background).
+- **Dimensionality**: The input height is always even, and the output dimension is always `(height/2) x width`.
