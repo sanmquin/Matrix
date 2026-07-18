@@ -1042,3 +1042,34 @@ The task 20981f0e involves partitioning an input grid into smaller rectangular s
 
 ### Transformation Summary
 This puzzle is a geometric normalization task. It decomposes the grid based on structural separators and applies a translation to each isolated component to align it to the center of its local partition.
+
+
+## Task 212895b5
+
+### Strategy Overview
+Task 212895b5 involves identifying a 3x3 block of `8`s within a grid and radiating two distinct patterns outwards from it: **staircases of `4`s** (from the faces) and **diagonal lines of `2`s** (from the corners). These patterns propagate until they either hit the edge of the grid or encounter a blocking wall of `5`s.
+
+### Key Logic and Components
+
+#### 1. Locating the Origin
+- The code first scans the grid to find the top-left corner of the 3x3 block of `8`s. 
+- It defines `(cr, cc)` as the center of this block, which serves as the anchor point for all emanating patterns.
+
+#### 2. Staircases of `4`s (Face Emanation)
+- The code handles four faces (TOP, RIGHT, BOTTOM, LEFT) independently. Each moves outward from the center block.
+- **Alternating Pattern:** Each staircase alternates between placing a single pixel (`k % 2 == 0`) and a 3-pixel wide bar (`k % 2 != 0`).
+- **Rotation:** Each face defines a movement direction (`main_dr, main_dc`) and a secondary step direction (`step_dr, step_dc`) to create the clockwise-rotating staircase effect.
+- **Termination:** If the code encounters a `5` at any point in the current step sequence, the staircase terminates.
+
+#### 3. Diagonal Lines of `2`s (Corner Emanation)
+- Four lines originate from the corners of the 3x3 block, moving diagonally outward in directions `(-1, -1), (-1, 1), (1, -1), (1, 1)`.
+- **Wall Check:** Before placing a `2`, the code checks if the flanking cells (the adjacent cells on either side of the diagonal path) are both `5`s. This acts as a "wall-blocking" condition to stop the diagonal line.
+- **Update Rule:** If the target cell is empty (`0`), it is filled with a `2`.
+
+### Summary of Transformations
+- **Input:** A grid containing a 3x3 `8` block, potential `5` obstacles, and `0`s.
+- **Process:** 
+  1. Identify center.
+  2. Extend `4`s in rotating staircases from center-faces.
+  3. Extend `2`s diagonally from center-corners.
+  4. Stop propagation at grid boundaries or `5` pixels.
