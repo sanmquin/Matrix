@@ -1504,3 +1504,25 @@ The task 319f2597 involves identifying specific 'trigger' patterns—2x2 blocks 
 ### Rules and Observations
 - **Preservation Rule**: The value `2` acts as a static mask. Regardless of whether a cell is part of an affected row or column, if its value is 2, it remains unchanged.
 - **Additive Property**: The transformations are applied cumulatively. Since the `result` grid is modified based on the `grid` (input) state, multiple 2x2 blocks can cause a 'crosshair' effect of zeros to propagate across the entire board, effectively clearing paths while leaving the 2s intact as anchors.
+
+
+## Task 31adaf00
+
+### Strategy Overview
+The goal of task 31adaf00 is to identify all maximal square regions consisting entirely of 0s (with a size of at least 2x2) and fill them with the color 1, provided they are not "subsumed" or overlapped by a larger maximal square. The logic treats 0s as empty space and 5s as obstacles or boundaries.
+
+### Key Helper Functions
+1. **`psum` (2D Prefix Sums):** This precomputed table allows the code to check if any rectangular region in the grid contains only 0s in $O(1)$ time by subtracting the sums of the regions.
+2. **`all_zero(r1, c1, r2, c2)`:** Uses the prefix sum table to quickly verify if the subgrid defined by top-left $(r1, c1)$ and bottom-right $(r2, c2)$ is entirely composed of 0s.
+3. **`is_maximal(r1, c1, r2, c2)`:** Checks the perimeter of the identified square. If the square can be extended in any direction (up, down, left, or right) while still containing only 0s, it is not a 'maximal' rectangle and is excluded.
+4. **`overlaps(a, b)`:** A simple collision detection function that determines if two square regions share any common grid cells.
+
+### Core Logic Steps
+1. **Scanning:** The script iterates through every cell in the grid to check for potential squares of size $N \ge 2$. 
+2. **Filtering Maximal Squares:** For every square found, the script checks if it is truly 'maximal' using the `is_maximal` helper. If a square can be expanded in any direction into existing 0-cells, it is discarded.
+3. **Handling Hierarchy:** Once all maximal squares are collected, the code performs a secondary filter. It iterates through the list and checks if a square is overlapped by any *other* maximal square that is strictly larger. 
+4. **Transformation:** Finally, any maximal square that is not dominated by a larger one has its cells set to 1 in the output grid.
+
+### Patterns and Rules
+- **Exclusivity:** A square only gets filled if it is the largest version of its kind in that specific location.
+- **Input/Output Constraints:** The transformation only affects regions of 0s; the 5s remain untouched, effectively acting as walls that define the boundaries of potential squares.
