@@ -1488,3 +1488,19 @@ This solution identifies the most prominent rectangular object in the input grid
 ### Patterns and Transformations
 * **Dimensionality Reduction**: Regardless of the original rectangle's size (so long as it is at least 3x3), the output is always normalized to a 3x3 grid.
 * **Spatial Heuristic**: The logic uses a geometric approach to prioritize objects that occupy more space near the center of the canvas, which is a common heuristic for identifying 'main subjects' in ARC tasks.
+
+
+## Task 319f2597
+
+### Strategy Summary
+The task 319f2597 involves identifying specific 'trigger' patterns—2x2 blocks of zeros—and using them to project 'clearing' lines across the grid. The logic treats 2s as immovable obstacles that must be preserved while turning other non-zero values into zeros within the affected rows and columns.
+
+### Key Logic and Steps
+1. **Pattern Detection**: The algorithm iterates through the grid using a sliding window to identify every 2x2 square containing only zeros. These locations are stored as coordinate pairs `(r, c)`.
+2. **Transformation Process**: For every identified 2x2 block at `(r, c)`:
+   - **Horizontal Clearing**: It iterates through the entire width of the grid for both row `r` and row `r+1`. Every cell in these rows is set to 0, provided the original value was not a 2.
+   - **Vertical Clearing**: It iterates through the entire height of the grid for both column `c` and column `c+1`. Every cell in these columns is set to 0, provided the original value was not a 2.
+
+### Rules and Observations
+- **Preservation Rule**: The value `2` acts as a static mask. Regardless of whether a cell is part of an affected row or column, if its value is 2, it remains unchanged.
+- **Additive Property**: The transformations are applied cumulatively. Since the `result` grid is modified based on the `grid` (input) state, multiple 2x2 blocks can cause a 'crosshair' effect of zeros to propagate across the entire board, effectively clearing paths while leaving the 2s intact as anchors.
