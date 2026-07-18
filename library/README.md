@@ -150,3 +150,7 @@ Modular functions for ARC puzzles.
 ### Task 271d71e2
 - **findConnectedBoxes**: Performs a Breadth-First Search (BFS) to identify rectangular clusters of cells representing 'boxes'. It returns an array of bounding box coordinates [minRow, minCol, maxRow, maxCol] for all identified clusters.
 - **getMaroonPositions**: Creates a Set containing string representations ('row,col') of all grid cells containing the value 9, representing the rails.
+
+### Task 0a2355a6
+- **getComponents**: Performs a connected components analysis on a grid to find all contiguous groups of cells matching a specific value. It uses a depth-first search (DFS) with a visited array to track processed cells.
+- **countHoles**: Calculates the number of enclosed empty (value 0) regions within or bounded by a component. It determines a bounding box for the component, flood-fills the 'outside' area, and counts the remaining unreachable regions of zeros.
