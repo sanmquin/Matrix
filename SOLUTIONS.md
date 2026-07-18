@@ -1401,3 +1401,48 @@ The task 2c0b0aff involves identifying isolated rectangular clusters of colored 
 ### Patterns and Rules
 - **Spatial Awareness:** The solution assumes that the arrangement (number and vertical position) of the components contains the primary information for determining the target output.
 - **Clustering:** It uses `flood_fill` because, in ARC tasks, shapes are often separated by empty space, making connected components the standard way to define distinct objects.
+
+
+## Task 2c737e39
+
+### Overview
+The ARC task 2c737e39 involves identifying a primary structure (a connected group of colored pixels containing a '5' marker) and an isolated '5' pixel. The objective is to relocate the primary structure such that its internal '5' pixel coincides with the location of the isolated '5', effectively using the isolated '5' as an anchor point to move the pattern.
+
+### Core Logic and Strategy
+1. **Segmentation**: The grid is analyzed to identify all distinct connected components using an 8-connected flood-fill algorithm. This separates the primary pattern from the isolated anchor.
+2. **Component Identification**: 
+   - The **main pattern** is defined as the largest connected component.
+   - The **lone 5** is identified as any component containing exactly one pixel with a value of 5.
+3. **Transformation**:
+   - Remove the 'lone 5' pixel from the grid.
+   - Identify the '5' pixel within the main pattern.
+   - Calculate the positional offset required to align the pattern's internal '5' with the coordinates of the removed 'lone 5'.
+   - Copy all non-'5' pixels from the main pattern to their new locations based on the calculated offset.
+
+### Key Helper Functions
+- `flood_fill(start_r, start_c)`: Traverses the grid to extract all coordinates belonging to a single connected object. It ignores empty cells (value 0) and uses a stack to perform the traversal.
+
+### Summary of Rules
+- The transformation assumes a translation-based logic: find the marker ('5') in the object and shift the entire object so that the marker overlaps with the destination coordinates.
+- The 'lone 5' effectively acts as a ghost or target position; it is consumed/overwritten during the alignment process.
+- The solution preserves the colors of the main pattern while ignoring the background (0) and the original '5' position.
+
+
+## Task 2f0c5170
+
+### Strategy Summary
+The goal of task 2f0c5170 is to identify a 'template' pattern (containing color 4) and a 'target' region (containing a single colored marker), and then overlay the template onto the target such that the colored markers in both align perfectly. The regions are separated by a border of 8s.
+
+### Key Helper Functions
+*   `find_rectangular_regions(grid)`: Scans the input grid for blocks of non-8 integers. It determines the bounds of these rectangles, extracts them as sub-grids, and ignores the 8s (which act as separators).
+
+### Core Logic
+1.  **Region Categorization**: The solver iterates through the identified rectangles. It classifies them into:
+    *   **Target Region**: A region containing exactly one unique color (the marker).
+    *   **Pattern Region**: A region containing the color 4 (the drawing) and the same colored marker found in the target region.
+2.  **Alignment**: Once the regions are identified, the solver locates the (r, c) coordinates of the shared `marker_color` within both the `target_region` and the `pattern_region`.
+3.  **Transformation (Overlay)**:
+    *   Calculate an `offset` (difference in marker coordinates) to determine how to shift the pattern to fit the target.
+    *   Create a copy of the target region as the base for the final output.
+    *   Iterate through the pattern region and map its cells onto the target grid, adjusted by the calculated offset.
+    *   Non-zero values in the pattern region overwrite the corresponding cells in the target grid, effectively 'stamping' the pattern onto the target at the correct anchor point.
