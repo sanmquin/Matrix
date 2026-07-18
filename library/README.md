@@ -158,3 +158,8 @@ Modular functions for ARC puzzles.
 ### Task 15663ba9
 - **findExterior**: Performs a flood-fill (BFS) algorithm to identify all empty (0) cells that are connected to the outer boundary of the grid. Returns a 2D boolean array where true indicates the cell is part of the exterior space.
 - **classifyCorners**: Identifies L-shaped corners within the grid. For each non-zero cell, it checks if it has exactly two neighbors at 90-degree angles. If so, it inspects the diagonal cell relative to the corner. If the diagonal cell is empty and interior (not exterior), it marks the corner as 4, otherwise as 2.
+
+### Task a8610ef7
+- **createEmptyGrid**: Initializes a new 2D array (grid) with the same dimensions as the provided input grid, filled entirely with a specified default value.
+- **isVerticallySymmetricMatch**: Determines if the cell located at the vertical mirror reflection of a given coordinate contains a specific target value.
+- **applySymmetryTransformation**: Iterates through the grid to perform a conditional transformation based on vertical symmetry of the target value. Returns a new grid containing the transformed values.
