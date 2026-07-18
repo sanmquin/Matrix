@@ -1468,3 +1468,23 @@ Task 310f3251 requires expanding a small N×N input grid into a 3N×3N output gr
 ### Patterns and Rules
 - **Diagonally Offset Placement:** The rule `(r-1, c-1)` reflects a wrap-around diagonal shift (using modulo arithmetic to ensure indices remain within grid bounds). This defines the structural logic for how new pixels are introduced into the base pattern.
 - **Cyclical Scaling:** The tiling process leverages the modulo operator to scale the base pattern geometrically, ensuring the output is a perfectly repeated mosaic of the modified base tile.
+
+
+## Task 3194b014
+
+### Strategy Overview
+This solution identifies the most prominent rectangular object in the input grid and reduces it to a 3x3 representation. It interprets the task as finding the 'dominant' shape based on its dimensions and proximity to the grid center, then outputting a standardized 3x3 square of that color.
+
+### Key Logic and Steps
+1. **Color Extraction**: The code identifies all non-background (non-zero) colors present in the input grid.
+2. **Rectangle Discovery**: It iterates through every possible top-left coordinate `(r1, c1)` for each identified color. From each starting point, it calculates all valid solid rectangular dimensions (width and height) by expanding right and down as long as the color matches.
+3. **Filtering**: It ignores any rectangle smaller than 3x3, ensuring only significant blocks are considered.
+4. **Selection Criteria**: 
+    *   It calculates the **area** of every valid rectangle found.
+    *   It calculates the **Manhattan distance** between the center of the rectangle and the center of the grid.
+    *   The 'best' rectangle is chosen based on a priority system: first, the **largest area**, and second, the **shortest distance** to the grid center if areas are equal.
+5. **Output Generation**: Once the best color is determined, the function returns a fixed 3x3 matrix filled entirely with that color.
+
+### Patterns and Transformations
+* **Dimensionality Reduction**: Regardless of the original rectangle's size (so long as it is at least 3x3), the output is always normalized to a 3x3 grid.
+* **Spatial Heuristic**: The logic uses a geometric approach to prioritize objects that occupy more space near the center of the canvas, which is a common heuristic for identifying 'main subjects' in ARC tasks.
