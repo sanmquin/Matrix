@@ -1095,3 +1095,22 @@ The task requires constructing a grid based on the locations of two 'anchor' pix
 - The transformation transforms sparse inputs into a structured geometric frame.
 - The anchor points act as the vertices for the cross-hatch structure and the rectangular fill region.
 - The output grid effectively maps a coordinate system defined by the relative positions of the two input points.
+
+
+## Task 22a4bbc2
+
+### Strategy Overview
+The solution identifies contiguous horizontal bands of identical rows and applies a conditional transformation to the colors within specific bands. Specifically, it treats the grid as a sequence of row-blocks and applies a color replacement rule to every third block (the 1st, 4th, 7th, etc.).
+
+### Core Logic
+1. **Block Identification**: The code iterates through the grid row-by-row to group consecutive rows that are identical. It stores these groups as a list of tuples `(start_row, end_row)`, representing the boundaries of each uniform horizontal block.
+2. **Conditional Transformation**: 
+   - The code iterates through the list of identified blocks using their index `idx`.
+   - It checks if `idx % 3 == 0` (targeting the 1st, 4th, 7th, etc., groups).
+   - For rows within these targeted blocks, it iterates through every cell.
+   - If a cell contains a non-zero value, that value is overwritten with `2` (red).
+
+### Summary of Transformation
+- The transformation acts as a filter that selectively recolors elements based on the vertical periodicity of the row patterns.
+- Non-zero values act as 'foreground' elements that are recolored, while `0` (background) values remain unchanged.
+- The pattern relies on the input having a structure where rows repeat, allowing the logic to segment the image into 'blocks' to be processed independently.
