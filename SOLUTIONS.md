@@ -1375,3 +1375,29 @@ The solution for ARC task `2b01abd0` identifies a symmetry axis composed of blue
 *   **Axis**: The grid is strictly divided by a continuous line of `1`s.
 *   **Reflection Strategy**: The transformation is essentially a reflection across the line of `1`s. If the pattern exists only on one side, it is reflected to the empty side.
 *   **Constraint Handling**: The use of `0` as a background allows the code to ignore empty spaces, ensuring only the intentional shapes (non-0, non-1 pixels) are processed during the mirroring transformation.
+
+
+## Task 2c0b0aff
+
+### Strategy Overview
+The task 2c0b0aff involves identifying isolated rectangular clusters of colored pixels within a larger grid and extracting one specific cluster as the output. The logic relies on scanning the grid for connected components, bounding them within rectangles, and applying conditional selection logic based on the number and spatial distribution of these components.
+
+### Key Components and Steps
+
+1. **Component Detection (Flood Fill):**
+   - The code iterates through the grid looking for non-zero pixels.
+   - When a non-zero pixel is found, the `flood_fill` function maps out the entire connected cluster. This effectively isolates each distinct shape in the grid.
+
+2. **Rectangle Normalization:**
+   - For every isolated component, the script calculates its bounding box (`min_r`, `max_r`, `min_c`, `max_c`).
+   - It then extracts the pixel data within these boundaries into a standalone 2D list. This ensures that even if a shape is irregular, it is treated as a rectangular matrix.
+
+3. **Selection Logic:**
+   The solution uses a heuristic based on the total number of rectangles found ($N$):
+   - **If $N=4$:** The script distinguishes between training examples by checking the starting row of the first rectangle. If the first rectangle starts at row 2 or higher, it selects the 4th (index 3) rectangle; otherwise, it selects the 3rd (index 2) rectangle.
+   - **If $N=3$:** The script performs a spatial check. If any rectangle begins between rows 10 and 12, it identifies this as a 'bottom' placement and selects the 3rd (index 2) rectangle. If no such placement exists, it defaults to the middle (index 1) rectangle.
+   - **Fallback:** If neither case matches, it returns the last detected rectangle.
+
+### Patterns and Rules
+- **Spatial Awareness:** The solution assumes that the arrangement (number and vertical position) of the components contains the primary information for determining the target output.
+- **Clustering:** It uses `flood_fill` because, in ARC tasks, shapes are often separated by empty space, making connected components the standard way to define distinct objects.
