@@ -959,3 +959,139 @@ The puzzle involves identifying a small 'template' region in the top-left corner
 ### Key Observations
 - **Spatial Filtering**: The solution relies on the relative position (coordinate comparison) to determine whether an object should be removed.
 - **Pattern Recognition**: The `5` (gray) pixels act as a structural anchor, effectively creating a 'protected zone' in the input grid. This allows the system to distinguish between 'instances' of a color that should be kept and 'instances' that are noise to be eliminated.
+
+
+## Task 2037f2c7
+
+### Strategy Overview
+The task requires identifying two distinct shapes in the input grid, determining which one is "damaged" (contains holes or gaps where the other has pixels), and returning a mask of the missing parts. The logic treats the shapes as templates: one is the complete object, and the other is a corrupted version of the same shape.
+
+### Core Logic and Steps
+1.  **Component Segmentation**: The code uses Breadth-First Search (BFS) to identify all connected components of non-zero pixels in the grid. 
+2.  **Grouping**: It identifies the two largest components as the primary objects. Smaller fragments are then associated with the nearest primary object based on their geometric centers to ensure that scattered pieces of the same shape are treated as a single entity.
+3.  **Normalization (Bounding Boxes)**: The code calculates the bounding box of each identified object. It then normalizes both objects to a standard grid size (`h` x `w`) based on the maximum dimensions found between the two objects, extracting them into two sub-grids.
+4.  **Damage Detection**: The code compares the two normalized sub-grids. It counts how many zero-pixels in one grid correspond to non-zero pixels in the other. The grid with more "missing" pixels relative to its counterpart is identified as the `damaged` object, while the other serves as the `template`.
+5.  **Mask Generation**: Finally, it creates a new grid where pixels are marked with '8' if the damaged object had a 0 while the template had a non-zero pixel. Rows that do not contain any missing pixels (damage) are stripped out, resulting in a compact output grid representing only the location of the missing pieces.
+
+### Key Functions
+*   **`BFS`**: Used to group connected pixels into distinct shapes.
+*   **`center()`**: Calculates the centroid of an object to associate stray fragments.
+*   **`extract()`**: Maps objects of potentially different bounding box sizes into a consistent coordinate space for direct pixel-by-pixel comparison.
+*   **Damage comparison**: A comparative logic that identifies the "template" by detecting which object contains more non-zero information.
+
+
+## Task 2072aba6
+
+### Strategy Overview
+The task 2072aba6 involves a grid transformation where each cell in the input grid is expanded into a 2x2 block in the output grid. The transformation logic is conditional based on the value of the input cell.
+
+### Core Logic
+1. **Grid Expansion**: The output grid is defined with double the dimensions of the input grid (height `r*2` and width `c*2`), initialized with all zeros.
+2. **Conditional Mapping**:
+   - **Input value 5**: If an input cell contains the value 5, it is mapped to a specific 2x2 pattern in the output grid:
+     ```
+     [[1, 2],
+      [2, 1]]
+     ```
+   - **Input value 0**: If an input cell is 0, the corresponding 2x2 output block remains all zeros.
+
+### Key Steps
+- **Initialization**: Create an empty `2r x 2c` matrix filled with `0`s.
+- **Iteration**: The code traverses every cell `(i, j)` in the input grid using nested loops.
+- **Mapping**: For every cell `(i, j)` where the value is `5`:
+    - The output indices `(2i, 2j)`, `(2i, 2j+1)`, `(2i+1, 2j)`, and `(2i+1, 2j+1)` are updated to reflect the `[[1, 2], [2, 1]]` pattern.
+
+### Transformations
+The transformation effectively treats the input as a sparse representation where the presence of the number 5 dictates the placement of a specific 2x2 color pattern, while empty space (0) is preserved as empty space.
+
+
+## Task 20818e16
+
+### Logic Overview
+The solution for task 20818e16 identifies individual colored shapes within the input grid, determines their bounding boxes, and reconstructs a new output grid. The transformation essentially isolates all distinct colored regions, treats them as rectangles defined by their bounding box extent, and layers them sequentially into a single consolidated grid.
+
+### Core Strategy
+1. **Identify Background and Objects**: The code uses `collections.Counter` to identify the background color (the most frequent color in the grid). Every other color is treated as a distinct 'object'.
+2. **Bounding Box Calculation**: It iterates through the input grid to calculate the minimum and maximum row/column indices for each unique color, effectively defining the bounding box for every shape present.
+3. **Sorting**: It stores the objects as tuples containing area (height * width), color, height, and width. These are sorted by area in descending order.
+4. **Reconstruction**: It determines the dimensions of the final output based on the largest identified rectangle (the first element after sorting). It then iterates through the sorted rectangles and 'paints' them onto the result grid. Because it paints from largest to smallest, the output acts as a consolidated overlay of all found shapes.
+
+### Key Steps
+- **`Counter`**: Used to robustly filter out the background.
+- **Dictionary Mapping**: The `bboxes` dictionary maps each color to its extreme coordinates `[min_r, min_c, max_r, max_c]`.
+- **Layering**: The code initializes a grid of the largest rectangle's size and fills it. By iterating through the sorted `rects`, it constructs the final output by filling in the colors based on their determined dimensions.
+
+### Pattern Recognition
+This approach assumes that the puzzle requires extracting all colored objects from a cluttered input and representing them as a stack or collection of filled rectangles of their respective detected sizes.
+
+
+## Task 20981f0e
+
+### Strategy Overview
+The task 20981f0e involves partitioning an input grid into smaller rectangular sub-grids using 'separator' lines (identified by the value `2`). The goal is to isolate existing colored patterns (represented by the value `1`) within these sub-grids and re-center them perfectly within their respective bounded regions.
+
+### Key Logic and Steps
+1. **Boundary Identification**: The code identifies all rows and columns that contain at least one `2`. These rows and columns act as barriers, effectively segmenting the grid into a set of disjoint rectangular cells.
+2. **Grid Segmentation**: By adding virtual boundaries at `-1`, the identified `2`-lines, and the grid edges, the code creates a collection of sub-grids defined by `(row_bounds[ri] + 1, row_bounds[ri + 1])` and `(col_bounds[ci] + 1, col_bounds[ci + 1])`.
+3. **Pattern Extraction**: For every defined sub-grid, the algorithm scans for pixels containing the value `1`. It computes the relative bounding box (height and width) of the shape formed by these pixels.
+4. **Centering Transformation**:
+   - It calculates the dimensions of the sub-grid (`H` x `W`) and the dimensions of the shape (`h` x `w`).
+   - It computes the offsets `new_top = (H - h) // 2` and `new_left = (W - w) // 2` to determine the centered position of the shape within the current sub-grid.
+   - It clears the original pixels and redraws the shape in the new calculated coordinates within the output grid.
+5. **Reconstruction**: The original `2` separators are preserved in their original positions in the output grid, while all non-separator regions are cleared and repopulated with the centered shapes.
+
+### Transformation Summary
+This puzzle is a geometric normalization task. It decomposes the grid based on structural separators and applies a translation to each isolated component to align it to the center of its local partition.
+
+
+## Task 212895b5
+
+### Strategy Overview
+Task 212895b5 involves identifying a 3x3 block of `8`s within a grid and radiating two distinct patterns outwards from it: **staircases of `4`s** (from the faces) and **diagonal lines of `2`s** (from the corners). These patterns propagate until they either hit the edge of the grid or encounter a blocking wall of `5`s.
+
+### Key Logic and Components
+
+#### 1. Locating the Origin
+- The code first scans the grid to find the top-left corner of the 3x3 block of `8`s. 
+- It defines `(cr, cc)` as the center of this block, which serves as the anchor point for all emanating patterns.
+
+#### 2. Staircases of `4`s (Face Emanation)
+- The code handles four faces (TOP, RIGHT, BOTTOM, LEFT) independently. Each moves outward from the center block.
+- **Alternating Pattern:** Each staircase alternates between placing a single pixel (`k % 2 == 0`) and a 3-pixel wide bar (`k % 2 != 0`).
+- **Rotation:** Each face defines a movement direction (`main_dr, main_dc`) and a secondary step direction (`step_dr, step_dc`) to create the clockwise-rotating staircase effect.
+- **Termination:** If the code encounters a `5` at any point in the current step sequence, the staircase terminates.
+
+#### 3. Diagonal Lines of `2`s (Corner Emanation)
+- Four lines originate from the corners of the 3x3 block, moving diagonally outward in directions `(-1, -1), (-1, 1), (1, -1), (1, 1)`.
+- **Wall Check:** Before placing a `2`, the code checks if the flanking cells (the adjacent cells on either side of the diagonal path) are both `5`s. This acts as a "wall-blocking" condition to stop the diagonal line.
+- **Update Rule:** If the target cell is empty (`0`), it is filled with a `2`.
+
+### Summary of Transformations
+- **Input:** A grid containing a 3x3 `8` block, potential `5` obstacles, and `0`s.
+- **Process:** 
+  1. Identify center.
+  2. Extend `4`s in rotating staircases from center-faces.
+  3. Extend `2`s diagonally from center-corners.
+  4. Stop propagation at grid boundaries or `5` pixels.
+
+
+## Task 21f83797
+
+### Strategy Summary
+The task requires constructing a grid based on the locations of two 'anchor' pixels (value 2). The logic identifies these two pixels and uses their coordinates to define a geometric boundary (a cross shape) and an internal rectangular region (filled with 1s).
+
+### Core Logic
+1. **Identify Anchor Points**: The algorithm scans the input grid to locate the coordinates `(r1, c1)` and `(r2, c2)` of the two pixels with value 2.
+2. **Initialize Output**: A new grid of the same dimensions as the input is created, initialized entirely with 0s.
+3. **Draw Cross Lines**: 
+   - It draws vertical lines of 2s at column indices `c1` and `c2` across all rows.
+   - It draws horizontal lines of 2s at row indices `r1` and `r2` across all columns.
+   - This creates a grid-like cross structure defined by the boundaries of the anchor points.
+4. **Fill Interior**: 
+   - The algorithm calculates the interior rectangle bounded by `(rmin, cmin)` and `(rmax, cmax)`.
+   - All cells strictly inside this rectangle (excluding the boundary lines themselves) are filled with the value 1.
+
+### Key Patterns
+- The transformation transforms sparse inputs into a structured geometric frame.
+- The anchor points act as the vertices for the cross-hatch structure and the rectangular fill region.
+- The output grid effectively maps a coordinate system defined by the relative positions of the two input points.
