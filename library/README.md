@@ -154,3 +154,7 @@ Modular functions for ARC puzzles.
 ### Task 0a2355a6
 - **getComponents**: Performs a connected components analysis on a grid to find all contiguous groups of cells matching a specific value. It uses a depth-first search (DFS) with a visited array to track processed cells.
 - **countHoles**: Calculates the number of enclosed empty (value 0) regions within or bounded by a component. It determines a bounding box for the component, flood-fills the 'outside' area, and counts the remaining unreachable regions of zeros.
+
+### Task 15663ba9
+- **findExterior**: Performs a flood-fill (BFS) algorithm to identify all empty (0) cells that are connected to the outer boundary of the grid. Returns a 2D boolean array where true indicates the cell is part of the exterior space.
+- **classifyCorners**: Identifies L-shaped corners within the grid. For each non-zero cell, it checks if it has exactly two neighbors at 90-degree angles. If so, it inspects the diagonal cell relative to the corner. If the diagonal cell is empty and interior (not exterior), it marks the corner as 4, otherwise as 2.
