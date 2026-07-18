@@ -89,3 +89,6 @@ The solution identifies connected components of the color '8' within a grid usin
 
 ### Task 15663ba9
 The solution processes a grid of numbers to classify specific cells based on their local connectivity and relationship to the grid's 'exterior' (the background connected to the borders). First, the code uses a Breadth-First Search (BFS) to identify all empty (0) cells connected to the grid boundary, marking them as the 'exterior'. Then, the code iterates through non-zero cells to identify 'L-corners'—cells that have exactly two neighbors forming a 90-degree angle. These L-corner cells are then assigned a value: if the diagonal cell opposite the corner is an empty space that is NOT part of the exterior (i.e., it is an enclosed interior empty space), the cell is assigned 4; otherwise, it is assigned 2.
+
+### Task a8610ef7
+The solution implements a vertical symmetry check on a 2D grid. It targets specific cells containing the digit '8'. For every such cell, the function inspects its vertical mirror counterpart (the cell at the same column but mirrored row position). If the mirrored cell also contains an '8', the original position in the output grid is set to 2. If the mirrored cell does not contain an '8', the position is set to 5. All other cells (not containing an '8') are initialized to 0 in the resulting grid.
