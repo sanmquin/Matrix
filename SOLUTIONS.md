@@ -1073,3 +1073,25 @@ Task 212895b5 involves identifying a 3x3 block of `8`s within a grid and radiati
   2. Extend `4`s in rotating staircases from center-faces.
   3. Extend `2`s diagonally from center-corners.
   4. Stop propagation at grid boundaries or `5` pixels.
+
+
+## Task 21f83797
+
+### Strategy Summary
+The task requires constructing a grid based on the locations of two 'anchor' pixels (value 2). The logic identifies these two pixels and uses their coordinates to define a geometric boundary (a cross shape) and an internal rectangular region (filled with 1s).
+
+### Core Logic
+1. **Identify Anchor Points**: The algorithm scans the input grid to locate the coordinates `(r1, c1)` and `(r2, c2)` of the two pixels with value 2.
+2. **Initialize Output**: A new grid of the same dimensions as the input is created, initialized entirely with 0s.
+3. **Draw Cross Lines**: 
+   - It draws vertical lines of 2s at column indices `c1` and `c2` across all rows.
+   - It draws horizontal lines of 2s at row indices `r1` and `r2` across all columns.
+   - This creates a grid-like cross structure defined by the boundaries of the anchor points.
+4. **Fill Interior**: 
+   - The algorithm calculates the interior rectangle bounded by `(rmin, cmin)` and `(rmax, cmax)`.
+   - All cells strictly inside this rectangle (excluding the boundary lines themselves) are filled with the value 1.
+
+### Key Patterns
+- The transformation transforms sparse inputs into a structured geometric frame.
+- The anchor points act as the vertices for the cross-hatch structure and the rectangular fill region.
+- The output grid effectively maps a coordinate system defined by the relative positions of the two input points.
