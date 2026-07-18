@@ -959,3 +959,22 @@ The puzzle involves identifying a small 'template' region in the top-left corner
 ### Key Observations
 - **Spatial Filtering**: The solution relies on the relative position (coordinate comparison) to determine whether an object should be removed.
 - **Pattern Recognition**: The `5` (gray) pixels act as a structural anchor, effectively creating a 'protected zone' in the input grid. This allows the system to distinguish between 'instances' of a color that should be kept and 'instances' that are noise to be eliminated.
+
+
+## Task 2037f2c7
+
+### Strategy Overview
+The task requires identifying two distinct shapes in the input grid, determining which one is "damaged" (contains holes or gaps where the other has pixels), and returning a mask of the missing parts. The logic treats the shapes as templates: one is the complete object, and the other is a corrupted version of the same shape.
+
+### Core Logic and Steps
+1.  **Component Segmentation**: The code uses Breadth-First Search (BFS) to identify all connected components of non-zero pixels in the grid. 
+2.  **Grouping**: It identifies the two largest components as the primary objects. Smaller fragments are then associated with the nearest primary object based on their geometric centers to ensure that scattered pieces of the same shape are treated as a single entity.
+3.  **Normalization (Bounding Boxes)**: The code calculates the bounding box of each identified object. It then normalizes both objects to a standard grid size (`h` x `w`) based on the maximum dimensions found between the two objects, extracting them into two sub-grids.
+4.  **Damage Detection**: The code compares the two normalized sub-grids. It counts how many zero-pixels in one grid correspond to non-zero pixels in the other. The grid with more "missing" pixels relative to its counterpart is identified as the `damaged` object, while the other serves as the `template`.
+5.  **Mask Generation**: Finally, it creates a new grid where pixels are marked with '8' if the damaged object had a 0 while the template had a non-zero pixel. Rows that do not contain any missing pixels (damage) are stripped out, resulting in a compact output grid representing only the location of the missing pieces.
+
+### Key Functions
+*   **`BFS`**: Used to group connected pixels into distinct shapes.
+*   **`center()`**: Calculates the centroid of an object to associate stray fragments.
+*   **`extract()`**: Maps objects of potentially different bounding box sizes into a consistent coordinate space for direct pixel-by-pixel comparison.
+*   **Damage comparison**: A comparative logic that identifies the "template" by detecting which object contains more non-zero information.
