@@ -92,3 +92,6 @@ The solution processes a grid of numbers to classify specific cells based on the
 
 ### Task a8610ef7
 The solution implements a vertical symmetry check on a 2D grid. It targets specific cells containing the digit '8'. For every such cell, the function inspects its vertical mirror counterpart (the cell at the same column but mirrored row position). If the mirrored cell also contains an '8', the original position in the output grid is set to 2. If the mirrored cell does not contain an '8', the position is set to 5. All other cells (not containing an '8') are initialized to 0 in the resulting grid.
+
+### Task 817e6c09
+The solution identifies all 2x2 squares composed of color 2 (red) within a grid. It ensures that overlapping blocks are handled by tracking visited cells. These blocks are then sorted by their column index. Finally, the blocks are recolored based on their horizontal order: the rightmost blocks are colored 8 (azure), and as you move left, the color alternates between 8 and 2. This effectively applies a pattern-based transformation to the detected sub-structures.

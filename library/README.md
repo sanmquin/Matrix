@@ -163,3 +163,8 @@ Modular functions for ARC puzzles.
 - **createEmptyGrid**: Initializes a new 2D array (grid) with the same dimensions as the provided input grid, filled entirely with a specified default value.
 - **isVerticallySymmetricMatch**: Determines if the cell located at the vertical mirror reflection of a given coordinate contains a specific target value.
 - **applySymmetryTransformation**: Iterates through the grid to perform a conditional transformation based on vertical symmetry of the target value. Returns a new grid containing the transformed values.
+
+### Task 817e6c09
+- **findBlocks**: Scans the input grid to locate the top-left coordinates of all non-overlapping 2x2 blocks filled entirely with the color 2. It utilizes a Set to track processed cells, preventing blocks that share cells from being counted multiple times.
+- **sortBlocks**: Creates a shallow copy of the block coordinates array and sorts them in ascending order based on their column index.
+- **applyAlternatingRecoloring**: Transforms a grid by applying an alternating color scheme to the identified 2x2 blocks. Starting from the rightmost block and moving left, it cycles between color 8 (if the index from the right is even) and color 2 (if odd).
